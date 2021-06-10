@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/item1"
+        android:title="@string/pelayan"
+        android:icon="@drawable/ic_baseline_food_bank_24"
+        />
+
+    <item
+        android:id="@+id/item2"
+        android:title="@string/presen"
+        android:icon="@drawable/ic_baseline_access_time_filled_24"
+        />
+
+
+    <item
+        android:id="@+id/item3"
+        android:title="@string/penilai"
+        android:icon="@drawable/ic_best_employee"/>
+
+    <item
+        android:id="@+id/item4"
+        android:title="Admin"
+        android:icon="@drawable/ic_baseline_person_pin_24"/>
+
+
+</menu>
