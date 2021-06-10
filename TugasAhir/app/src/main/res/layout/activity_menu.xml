@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/panel"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="#ff0005"
+        android:orientation="horizontal"
+        android:weightSum="16">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnBack"
+            android:layout_gravity="start|center_vertical"
+            android:layout_weight="2"
+            android:src="@drawable/ic_baseline_navigate_before_24" />
+
+        <TextView
+            android:id="@+id/txtNomormeja"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="11"
+            android:gravity="center"
+            android:text="Meja Nomor 1"
+            android:textColor="#fff"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <FrameLayout
+            android:id="@+id/btnCart"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3">
+
+            <ImageView
+                android:id="@+id/cartButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_baseline_shopping_cart_24" />
+
+            <RelativeLayout
+                android:id="@+id/coverBadge"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_alignTop="@+id/cartButton"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_toRightOf="@+id/cartButton"
+                android:background="@drawable/badge_background">
+                <TextView
+                    android:id="@+id/badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#fff"
+                    android:layout_centerInParent="true"/>
+            </RelativeLayout>
+
+
+<!--            <com.nex3z.notificationbadge.NotificationBadge-->
+<!--                android:id="@+id/badge"-->
+<!--                android:layout_width="28dp"-->
+<!--                android:layout_height="28dp"-->
+<!--                android:layout_alignTop="@+id/cartButton"-->
+<!--                android:layout_marginLeft="10dp"-->
+<!--                android:layout_toRightOf="@+id/cartButton"-->
+<!--                app:nbMaxTextLength="2"-->
+<!--                android:outlineAmbientShadowColor="#fff"-->
+<!--                android:outlineSpotShadowColor="#fff"-->
+<!--                />-->
+        </FrameLayout>
+    </LinearLayout>
+
+
+    <HorizontalScrollView
+        android:id="@+id/layoutBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/panel">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnFriedChicken"
+                android:layout_margin="10dp"
+                android:text="Fried Chicken"
+                android:textAllCaps="false" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnPaket"
+                android:layout_margin="10dp"
+                android:text="Paket"
+                android:textAllCaps="false" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnBurger"
+                android:layout_margin="10dp"
+                android:text="Burger"
+                android:textAllCaps="false" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnCemilan"
+                android:layout_margin="10dp"
+                android:text="Cemilan"
+                android:textAllCaps="false" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnMinuman"
+                android:layout_margin="10dp"
+                android:text="Minuman"
+                android:textAllCaps="false" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerviewFried"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layoutBtn"
+        android:layout_marginTop="2dp" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerviewPaket"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layoutBtn"
+        android:layout_marginTop="2dp"
+        android:visibility="invisible"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerviewBurger"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layoutBtn"
+        android:layout_marginTop="2dp"
+        android:visibility="invisible"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerviewCemilan"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layoutBtn"
+        android:layout_marginTop="2dp"
+        android:visibility="invisible"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerviewMinuman"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layoutBtn"
+        android:layout_marginTop="4dp"
+        android:visibility="invisible" />
+
+</RelativeLayout>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="kaisar_pajar_oktavianus_entiman.tugasahir">
+
+    <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/logo_footer_white"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/logo_footer_white"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.TugasAhir">
+        <activity android:name=".HalamanScan"
+            android:theme="@style/Themenoactionbar.TugasAhir"></activity>
+        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".CartActivity"
+            android:theme="@style/Themenoactionbar.TugasAhir" />
+        <activity android:name=".Pemesanan" />
+        <activity
+            android:name=".Menu"
+            android:theme="@style/Themenoactionbar.TugasAhir" />
+        <activity
+            android:name=".Capture"
+            android:screenOrientation="portrait"
+            android:stateNotNeeded="true"
+            android:theme="@style/zxing_CaptureTheme" />
+        <activity
+            android:name=".Splashscreen"
+            android:theme="@style/Themenoactionbar.TugasAhir">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

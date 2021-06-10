@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "638860603449",
+    "firebase_url": "https://tugasahir-4ae0b-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "tugasahir-4ae0b",
+    "storage_bucket": "tugasahir-4ae0b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:638860603449:android:435e5d5bf618bb352e9de8",
+        "android_client_info": {
+          "package_name": "kaisar_pajar_oktavianus_entiman.tugasahir"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "638860603449-fd20bpr2jshmdtibh54t6c2qqkdp8anf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvmZBpOFhsHmA1DnGSGEKimbgOEGvZB48"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "638860603449-fd20bpr2jshmdtibh54t6c2qqkdp8anf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
