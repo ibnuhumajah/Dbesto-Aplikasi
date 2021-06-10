@@ -53,9 +53,9 @@ public class PelayananMain extends AppCompatActivity implements SwipeRefreshLayo
     private DatabaseReference databaseReference;
     private CardView meja1, meja2, meja3, meja4, meja5, meja6;
     private Button btn_scan, btn_out;
-    private RelativeLayout rl_scan, kasir, notif;
+    private RelativeLayout rl_scan, kasir, notif, notif2, notif3, notif4,  notif5, notif6;
     private LinearLayout main_meja;
-    private TextView txnama, txnik, txwaktu, txnotif;
+    private TextView txnama, txnik, txwaktu, txnotif, txnotif2, txnotif3, txnotif4, txnotif5, txnotif6;
     Stringaddress stringaddress;
 
     FirebaseDatabase firebaseDatabase;
@@ -85,8 +85,12 @@ public class PelayananMain extends AppCompatActivity implements SwipeRefreshLayo
         meja1 = findViewById(R.id.cv_meja1); meja2 = findViewById(R.id.cv_meja2);
         meja3 = findViewById(R.id.cv_meja3); meja4 = findViewById(R.id.cv_meja4);
         meja5 = findViewById(R.id.cv_meja5); meja6 = findViewById(R.id.cv_meja6);
-        notif = findViewById(R.id.coverBadge);
-        txnotif = findViewById(R.id.badge);
+        notif = findViewById(R.id.coverBadge); notif2 = findViewById(R.id.coverBadge2);
+        notif3 = findViewById(R.id.coverBadge3); notif4 = findViewById(R.id.coverBadge4);
+        notif5 = findViewById(R.id.coverBadge5); notif6 = findViewById(R.id.coverBadge6);
+        txnotif = findViewById(R.id.badge); txnotif2 = findViewById(R.id.badge2);
+        txnotif3 = findViewById(R.id.badge3); txnotif4 = findViewById(R.id.badge4);
+        txnotif5 = findViewById(R.id.badge5); txnotif6 = findViewById(R.id.badge6);
 
         btn_scan = (Button) findViewById(R.id.scankasir);
         btn_out = (Button) findViewById(R.id.outpelayan);
@@ -102,6 +106,11 @@ public class PelayananMain extends AppCompatActivity implements SwipeRefreshLayo
         sessionManager = new SessionManager(this);
 
         check_pemesanan();
+        check_pemesanan2();
+        check_pemesanan3();
+        check_pemesanan4();
+        check_pemesanan5();
+        check_pemesanan6();
 
         meja1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -209,14 +218,141 @@ public class PelayananMain extends AppCompatActivity implements SwipeRefreshLayo
                             txnotif.setText("");
                         } else {
                             notif.setVisibility(View.INVISIBLE);
-
-//                            menuLoadListener.onMenuLoadFailed("Kesalahan jaringan");
                         }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-//                        menuLoadListener.onMenuLoadFailed(error.getMessage());
+                    }
+                });
+    }
+
+    void check_pemesanan2() {
+        List<PembayaranModel> pembayaranModels = new ArrayList<>();
+        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
+                .getReference("pembayaran").child("2")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
+                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
+                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
+                                pembayaranModels.add(pembayaranModel);
+                            }
+                            notif2.setVisibility(View.VISIBLE);
+                            txnotif2.setText("");
+                        } else {
+                            notif2.setVisibility(View.INVISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+    }
+
+    void check_pemesanan3() {
+        List<PembayaranModel> pembayaranModels = new ArrayList<>();
+        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
+                .getReference("pembayaran").child("3")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
+                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
+                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
+                                pembayaranModels.add(pembayaranModel);
+                            }
+                            notif3.setVisibility(View.VISIBLE);
+                            txnotif3.setText("");
+                        } else {
+                            notif3.setVisibility(View.INVISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+    }
+
+    void check_pemesanan4() {
+        List<PembayaranModel> pembayaranModels = new ArrayList<>();
+        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
+                .getReference("pembayaran").child("4")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
+                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
+                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
+                                pembayaranModels.add(pembayaranModel);
+                            }
+                            notif4.setVisibility(View.VISIBLE);
+                            txnotif4.setText("");
+                        } else {
+                            notif4.setVisibility(View.INVISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+    }
+
+    void check_pemesanan5() {
+        List<PembayaranModel> pembayaranModels = new ArrayList<>();
+        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
+                .getReference("pembayaran").child("5")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
+                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
+                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
+                                pembayaranModels.add(pembayaranModel);
+                            }
+                            notif5.setVisibility(View.VISIBLE);
+                            txnotif5.setText("");
+                        } else {
+                            notif5.setVisibility(View.INVISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+    }
+
+    void check_pemesanan6() {
+        List<PembayaranModel> pembayaranModels = new ArrayList<>();
+        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
+                .getReference("pembayaran").child("6")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
+                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
+                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
+                                pembayaranModels.add(pembayaranModel);
+                            }
+                            notif6.setVisibility(View.VISIBLE);
+                            txnotif6.setText("");
+                        } else {
+                            notif6.setVisibility(View.INVISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
                     }
                 });
     }
