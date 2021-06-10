@@ -122,13 +122,31 @@
                                 android:textSize="30dp"
                                 android:textStyle="bold" />
 
-                            <View
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
+                            <RelativeLayout
+                                android:id="@+id/coverBadge"
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
                                 android:layout_marginLeft="20dp"
                                 android:layout_marginTop="10dp"
                                 android:layout_toEndOf="@+id/tv1"
-                                android:background="@drawable/notif_circle" />
+                                android:background="@drawable/badge_background"
+                                android:visibility="gone">
+                                <TextView
+                                    android:id="@+id/badge"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textColor="#fff"
+                                    android:layout_centerInParent="true"/>
+                            </RelativeLayout>
+
+<!--                            <View-->
+<!--                                android:layout_width="20dp"-->
+<!--                                android:layout_height="20dp"-->
+<!--                                android:layout_marginLeft="20dp"-->
+<!--                                android:layout_marginTop="10dp"-->
+<!--                                android:layout_toEndOf="@+id/tv1"-->
+<!--                                android:background="@drawable/notif_circle" />-->
                         </RelativeLayout>
 
                         <RelativeLayout

@@ -12,9 +12,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -31,6 +33,8 @@ import com.ibnu.dbestokasir.Pelayanan.Meja.Pemesanan3;
 import com.ibnu.dbestokasir.Pelayanan.Meja.Pemesanan4;
 import com.ibnu.dbestokasir.Pelayanan.Meja.Pemesanan5;
 import com.ibnu.dbestokasir.Pelayanan.Meja.Pemesanan6;
+import com.ibnu.dbestokasir.Pelayanan.Pemesanan.PembayaranModel;
+import com.ibnu.dbestokasir.Pelayanan.Pemesanan.Stringaddress;
 import com.ibnu.dbestokasir.Presensi.PresensiBerhasil;
 import com.ibnu.dbestokasir.R;
 import com.ibnu.dbestokasir.SessionManager.SessionManager;
@@ -40,6 +44,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import static android.text.TextUtils.split;
 
@@ -48,9 +53,10 @@ public class PelayananMain extends AppCompatActivity implements SwipeRefreshLayo
     private DatabaseReference databaseReference;
     private CardView meja1, meja2, meja3, meja4, meja5, meja6;
     private Button btn_scan, btn_out;
-    private RelativeLayout rl_scan, kasir;
+    private RelativeLayout rl_scan, kasir, notif;
     private LinearLayout main_meja;
-    private TextView txnama, txnik, txwaktu;
+    private TextView txnama, txnik, txwaktu, txnotif;
+    Stringaddress stringaddress;
 
     FirebaseDatabase firebaseDatabase;
     DatabaseReference database;
@@ -79,6 +85,8 @@ public class PelayananMain extends AppCompatActivity implements SwipeRefreshLayo
         meja1 = findViewById(R.id.cv_meja1); meja2 = findViewById(R.id.cv_meja2);
         meja3 = findViewById(R.id.cv_meja3); meja4 = findViewById(R.id.cv_meja4);
         meja5 = findViewById(R.id.cv_meja5); meja6 = findViewById(R.id.cv_meja6);
+        notif = findViewById(R.id.coverBadge);
+        txnotif = findViewById(R.id.badge);
 
         btn_scan = (Button) findViewById(R.id.scankasir);
         btn_out = (Button) findViewById(R.id.outpelayan);
@@ -92,6 +100,8 @@ public class PelayananMain extends AppCompatActivity implements SwipeRefreshLayo
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.purple_700);
         sessionManager = new SessionManager(this);
+
+        check_pemesanan();
 
         meja1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,6 +190,35 @@ public class PelayananMain extends AppCompatActivity implements SwipeRefreshLayo
         database = FirebaseDatabase.getInstance("https://dbesto-default-rtdb.firebaseio.com/").getReference();
 
         checkLogin();
+    }
+
+    void check_pemesanan() {
+        List<PembayaranModel> pembayaranModels = new ArrayList<>();
+        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
+                .getReference("pembayaran").child("1")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
+                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
+                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
+                                pembayaranModels.add(pembayaranModel);
+                            }
+                            notif.setVisibility(View.VISIBLE);
+                            txnotif.setText("");
+                        } else {
+                            notif.setVisibility(View.INVISIBLE);
+
+//                            menuLoadListener.onMenuLoadFailed("Kesalahan jaringan");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+//                        menuLoadListener.onMenuLoadFailed(error.getMessage());
+                    }
+                });
     }
 
     private void checkLogin() {
@@ -369,5 +408,6 @@ public class PelayananMain extends AppCompatActivity implements SwipeRefreshLayo
 
     @Override
     public void onRefresh() {checkLogin();
+    check_pemesanan();
     }
 }

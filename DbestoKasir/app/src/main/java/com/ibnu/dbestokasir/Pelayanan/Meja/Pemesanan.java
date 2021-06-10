@@ -109,6 +109,7 @@ public class Pemesanan extends AppCompatActivity implements PembayaranLoadListen
                             pembayaranLoadListener.onPembayaranLoadSuccess(pembayaranModels);
                             empty.setVisibility(View.GONE);
                             proses.setVisibility(View.VISIBLE);
+                            onPembayaranLoadSuccess(pembayaranModels);
                         } else {
                             empty.setVisibility(View.VISIBLE);
                             proses.setVisibility(View.GONE);
