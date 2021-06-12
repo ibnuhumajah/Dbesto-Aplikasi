@@ -545,5 +545,10 @@ public class PelayananMain extends AppCompatActivity implements SwipeRefreshLayo
     @Override
     public void onRefresh() {checkLogin();
     check_pemesanan();
+        check_pemesanan2();
+        check_pemesanan3();
+        check_pemesanan4();
+        check_pemesanan5();
+        check_pemesanan6();
     }
 }

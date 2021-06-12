@@ -30,9 +30,13 @@ import com.google.zxing.qrcode.QRCodeReader;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.ibnu.dbestokasir.R;
 import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 
@@ -158,18 +162,23 @@ public class RecyclerViewDataUser extends RecyclerView.Adapter<RecyclerViewDataU
         try {
             PdfWriter.getInstance(doc, new FileOutputStream(outpath));
             doc.open();
-            doc.add(new Paragraph("================================"));
-            doc.add(new Paragraph("QRCode Karyawan d'Besto"));
-            doc.add(new Paragraph("================================\n\n"));
 
-            doc.add(new Paragraph("Nama : \t"+models.get(position).getNama()));
-            doc.add(new Paragraph("NIK : \t"+models.get(position).getNik()+"\n"));
-            doc.add(new Paragraph("QR Code : \t"));
+            doc.setPageSize(PageSize.A6);
+
+            Font normal =  new Font(Font.FontFamily.HELVETICA, 12,Font.NORMAL, BaseColor.BLACK);
+            Font bold =  new Font(Font.FontFamily.HELVETICA, 14,Font.BOLD, BaseColor.BLACK);
+            Font bold2 = new Font(Font.FontFamily.HELVETICA, 20, Font.BOLD, BaseColor.BLACK);
+
+            Paragraph title = new Paragraph("QRCode Karyawan \t" + models.get(position).getNama(), bold);
+            title.setAlignment(Element.ALIGN_CENTER);
+            title.setSpacingAfter(20);
+            doc.add(title);
+
+            doc.add(new Paragraph("Nama : \t"+models.get(position).getNama(), normal));
+            doc.add(new Paragraph("NIK : \t"+models.get(position).getNik()+"\n",normal));
+            doc.add(new Paragraph("QR Code : \t",normal));
 
             doc.add(myBitmap);
-
-            doc.add(new Paragraph("\n\n================================\n"));
-            doc.add(new Paragraph("d'Besto"));
 //close the document
             doc.close();
             Toast.makeText(context, "PDF berhasil dibuat", Toast.LENGTH_SHORT).show();

@@ -254,15 +254,15 @@ public class DataAbsen extends Fragment implements SwipeRefreshLayout.OnRefreshL
 
             Font normal =  new Font(Font.FontFamily.HELVETICA, 12,Font.NORMAL, BaseColor.BLACK);
             Font bold =  new Font(Font.FontFamily.HELVETICA, 14,Font.BOLD, BaseColor.BLACK);
+            Font bold2 = new Font(Font.FontFamily.HELVETICA, 20, Font.BOLD, BaseColor.BLACK);
 
-            Chunk title = new Chunk("Data Presensi Karyawan Dbesto", bold);
-            Paragraph paragraphtitle = new Paragraph(title);
-            paragraphtitle.setAlignment(Element.ALIGN_CENTER);
-            paragraphtitle.setSpacingAfter(20);
+            Paragraph title = new Paragraph("Data Absensi Karyawan Dbesto", bold2);
+            title.setAlignment(Element.ALIGN_CENTER);
+            title.setSpacingAfter(20);
 
             PdfPTable table = new PdfPTable(4);
             table.setWidthPercentage(100);
-            table.setWidths(new float[]{1,5,3,3});
+            table.setWidths(new float[]{1,4,3,4});
 
             PdfPCell cell;
             cell = new PdfPCell(new Phrase("No.", bold));
@@ -288,7 +288,6 @@ public class DataAbsen extends Fragment implements SwipeRefreshLayout.OnRefreshL
 
                 //Log.d("ddd", waktumasuk[0] + " " + date[0] + ", " + waktuFilter.trim().equals(dataWaktu.trim()));
                 if (status.equals("all")){
-                    paragraphtitle.setAlignment(Element.ALIGN_CENTER);
 
                     cell = new PdfPCell( new Phrase(String.valueOf(i+1), normal));
                     cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -305,37 +304,53 @@ public class DataAbsen extends Fragment implements SwipeRefreshLayout.OnRefreshL
                     cell = new PdfPCell( new Phrase(models.get(i).getMasuk(), normal));
                     cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                     table.addCell(cell);
-//
-//                    doc.add(new Paragraph("==================="));
-//                    doc.add(new Paragraph("Nama : " + models.get(i).getNama()));
-//                    doc.add(new Paragraph("NIK : " + models.get(i).getNik()));
-//                    doc.add(new Paragraph("Waktu Absen : " + models.get(i).getMasuk()));
-//                    doc.add(new Paragraph("==================="));
 
                 }else if (status.equals("tanggal")){
                     String dataWaktu = date[0].toString();
                     if (waktuFilter.trim().contains(dataWaktu.trim())) {
-                        doc.add(new Paragraph("==================="));
-                        doc.add(new Paragraph("Nama : " + models.get(i).getNama()));
-                        doc.add(new Paragraph("NIK : " + models.get(i).getNik()));
-                        doc.add(new Paragraph("Waktu Absen : " + models.get(i).getMasuk()));
-                        doc.add(new Paragraph("==================="));
+
+                        cell = new PdfPCell( new Phrase(String.valueOf(i+1), normal));
+                        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        table.addCell(cell);
+
+                        cell = new PdfPCell( new Phrase(models.get(i).getNama(), normal));
+                        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        table.addCell(cell);
+
+                        cell = new PdfPCell( new Phrase(models.get(i).getNik(), normal));
+                        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        table.addCell(cell);
+
+                        cell = new PdfPCell( new Phrase(models.get(i).getMasuk(), normal));
+                        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        table.addCell(cell);
                     }
                 }
             }
 
             if (status.equals("nama")){
                 for (int i =0 ; i<dataFilter.size();i++){
-                    doc.add(new Paragraph("==================="));
-                    doc.add(new Paragraph("Nama : " + dataFilter.get(i).getNama()));
-                    doc.add(new Paragraph("NIK : " + dataFilter.get(i).getNik()));
-                    doc.add(new Paragraph("Waktu Absen : " + dataFilter.get(i).getMasuk()));
-                    doc.add(new Paragraph("Waktu Keluar : " + dataFilter.get(i).getKeluar()));
-                    doc.add(new Paragraph("==================="));
+
+                    cell = new PdfPCell( new Phrase(String.valueOf(i+1), normal));
+                    cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    table.addCell(cell);
+
+                    cell = new PdfPCell( new Phrase(models.get(i).getNama(), normal));
+                    cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    table.addCell(cell);
+
+                    cell = new PdfPCell( new Phrase(models.get(i).getNik(), normal));
+                    cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    table.addCell(cell);
+
+                    cell = new PdfPCell( new Phrase(models.get(i).getMasuk(), normal));
+                    cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    table.addCell(cell);
                 }
             }
 
 //            doc.add(new Paragraph(date[0] + "wwww.dbesto.net"));
+            doc.add(title);
             doc.add(table);
             doc.close();
             Toast.makeText(getActivity(), "Laporan berhasil dibuat", Toast.LENGTH_SHORT).show();
