@@ -27,6 +27,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ibnu.dbestokasir.MainActivity;
+import com.ibnu.dbestokasir.Pelayanan.History.HistoryActivity;
 import com.ibnu.dbestokasir.Pelayanan.Meja.Pemesanan;
 import com.ibnu.dbestokasir.Pelayanan.Meja.Pemesanan2;
 import com.ibnu.dbestokasir.Pelayanan.Meja.Pemesanan3;
@@ -39,6 +40,11 @@ import com.ibnu.dbestokasir.Presensi.PresensiBerhasil;
 import com.ibnu.dbestokasir.R;
 import com.ibnu.dbestokasir.SessionManager.SessionManager;
 import com.ibnu.dbestokasir.admin.RegisterActivity;
+import com.ibnu.dbestokasir.eventbus.UpdatePemesanan;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -67,6 +73,29 @@ public class PelayananMain extends AppCompatActivity implements SwipeRefreshLayo
     SessionManager sessionManager;
     private ArrayList<Model> models = new ArrayList<>();
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        if (EventBus.getDefault().hasSubscriberForEvent(UpdatePemesanan.class))
+            EventBus.getDefault().removeStickyEvent(UpdatePemesanan.class);
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onUpdateCart(UpdatePemesanan event) {
+        check_pemesanan();
+//        check_pemesanan2();
+//        check_pemesanan3();
+//        check_pemesanan4();
+//        check_pemesanan5();
+//        check_pemesanan6();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,11 +135,11 @@ public class PelayananMain extends AppCompatActivity implements SwipeRefreshLayo
         sessionManager = new SessionManager(this);
 
         check_pemesanan();
-        check_pemesanan2();
-        check_pemesanan3();
-        check_pemesanan4();
-        check_pemesanan5();
-        check_pemesanan6();
+//        check_pemesanan2();
+//        check_pemesanan3();
+//        check_pemesanan4();
+//        check_pemesanan5();
+//        check_pemesanan6();
 
         meja1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -219,142 +248,158 @@ public class PelayananMain extends AppCompatActivity implements SwipeRefreshLayo
                         } else {
                             notif.setVisibility(View.INVISIBLE);
                         }
+                        EventBus.getDefault().postSticky(new UpdatePemesanan());
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
                     }
                 });
+
+//        List<PembayaranModel> pembayaranModels2 = new ArrayList<>();
+//        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
+//                .getReference("pembayaran").child("2")
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        if (snapshot.exists()) {
+//                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
+//                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
+//                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
+//                                pembayaranModels2.add(pembayaranModel);
+//                            }
+//                            notif2.setVisibility(View.VISIBLE);
+//                            txnotif2.setText("");
+//                        } else {
+//                            notif2.setVisibility(View.INVISIBLE);
+//                        }
+//                        EventBus.getDefault().postSticky(new UpdatePemesanan());
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//                    }
+//                });
+//
+//        List<PembayaranModel> pembayaranModels3 = new ArrayList<>();
+//        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
+//                .getReference("pembayaran").child("3")
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        if (snapshot.exists()) {
+//                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
+//                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
+//                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
+//                                pembayaranModels3.add(pembayaranModel);
+//                            }
+//                            notif3.setVisibility(View.VISIBLE);
+//                            txnotif3.setText("");
+//                        } else {
+//                            notif3.setVisibility(View.INVISIBLE);
+//                        }
+//                        EventBus.getDefault().postSticky(new UpdatePemesanan());
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//                    }
+//                });
+//
+//        List<PembayaranModel> pembayaranModels4 = new ArrayList<>();
+//        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
+//                .getReference("pembayaran").child("4")
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        if (snapshot.exists()) {
+//                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
+//                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
+//                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
+//                                pembayaranModels4.add(pembayaranModel);
+//                            }
+//                            notif4.setVisibility(View.VISIBLE);
+//                            txnotif4.setText("");
+//                        } else {
+//                            notif4.setVisibility(View.INVISIBLE);
+//                        }
+//                        EventBus.getDefault().postSticky(new UpdatePemesanan());
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//                    }
+//                });
+//
+//        List<PembayaranModel> pembayaranModels5 = new ArrayList<>();
+//        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
+//                .getReference("pembayaran").child("5")
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        if (snapshot.exists()) {
+//                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
+//                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
+//                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
+//                                pembayaranModels5.add(pembayaranModel);
+//                            }
+//                            notif5.setVisibility(View.VISIBLE);
+//                            txnotif5.setText("");
+//                        } else {
+//                            notif5.setVisibility(View.INVISIBLE);
+//                        }
+//                        EventBus.getDefault().postSticky(new UpdatePemesanan());
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//                    }
+//                });
+//
+//        List<PembayaranModel> pembayaranModels6 = new ArrayList<>();
+//        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
+//                .getReference("pembayaran").child("6")
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        if (snapshot.exists()) {
+//                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
+//                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
+//                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
+//                                pembayaranModels6.add(pembayaranModel);
+//                            }
+//                            notif6.setVisibility(View.VISIBLE);
+//                            txnotif6.setText("");
+//                        } else {
+//                            notif6.setVisibility(View.INVISIBLE);
+//                        }
+//                        EventBus.getDefault().postSticky(new UpdatePemesanan());
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//                    }
+//                });
     }
 
     void check_pemesanan2() {
-        List<PembayaranModel> pembayaranModels = new ArrayList<>();
-        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
-                .getReference("pembayaran").child("2")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
-                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
-                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
-                                pembayaranModels.add(pembayaranModel);
-                            }
-                            notif2.setVisibility(View.VISIBLE);
-                            txnotif2.setText("");
-                        } else {
-                            notif2.setVisibility(View.INVISIBLE);
-                        }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                    }
-                });
     }
 
     void check_pemesanan3() {
-        List<PembayaranModel> pembayaranModels = new ArrayList<>();
-        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
-                .getReference("pembayaran").child("3")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
-                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
-                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
-                                pembayaranModels.add(pembayaranModel);
-                            }
-                            notif3.setVisibility(View.VISIBLE);
-                            txnotif3.setText("");
-                        } else {
-                            notif3.setVisibility(View.INVISIBLE);
-                        }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                    }
-                });
     }
 
     void check_pemesanan4() {
-        List<PembayaranModel> pembayaranModels = new ArrayList<>();
-        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
-                .getReference("pembayaran").child("4")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
-                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
-                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
-                                pembayaranModels.add(pembayaranModel);
-                            }
-                            notif4.setVisibility(View.VISIBLE);
-                            txnotif4.setText("");
-                        } else {
-                            notif4.setVisibility(View.INVISIBLE);
-                        }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                    }
-                });
     }
 
     void check_pemesanan5() {
-        List<PembayaranModel> pembayaranModels = new ArrayList<>();
-        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
-                .getReference("pembayaran").child("5")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
-                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
-                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
-                                pembayaranModels.add(pembayaranModel);
-                            }
-                            notif5.setVisibility(View.VISIBLE);
-                            txnotif5.setText("");
-                        } else {
-                            notif5.setVisibility(View.INVISIBLE);
-                        }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                    }
-                });
     }
 
     void check_pemesanan6() {
-        List<PembayaranModel> pembayaranModels = new ArrayList<>();
-        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
-                .getReference("pembayaran").child("6")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
-                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
-                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
-                                pembayaranModels.add(pembayaranModel);
-                            }
-                            notif6.setVisibility(View.VISIBLE);
-                            txnotif6.setText("");
-                        } else {
-                            notif6.setVisibility(View.INVISIBLE);
-                        }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                    }
-                });
     }
 
     private void checkLogin() {
@@ -528,7 +573,7 @@ public class PelayananMain extends AppCompatActivity implements SwipeRefreshLayo
             case R.id.action_history:
                 //Ubah Register
                 startActivity(new Intent(PelayananMain.this,
-                        RegisterActivity.class));
+                        HistoryActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

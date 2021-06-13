@@ -44,7 +44,6 @@ public class PembayaranAdapter extends RecyclerView.Adapter<PembayaranAdapter.My
         this.context = context;
         this.pembayaranModelList = pembayaranModelList;
         this.cartLoadListener = cartLoadListener;
-
     }
 
     @NonNull
@@ -121,7 +120,7 @@ public class PembayaranAdapter extends RecyclerView.Adapter<PembayaranAdapter.My
         return pembayaranModelList.size();
     }
 
-    public class MyPembayaranViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class MyPembayaranViewHolder extends RecyclerView.ViewHolder {
 
 
         @BindView(R.id.imgPemesanan)
@@ -147,12 +146,6 @@ public class PembayaranAdapter extends RecyclerView.Adapter<PembayaranAdapter.My
         public MyPembayaranViewHolder(@NonNull View itemView) {
             super(itemView);
             unbinder = ButterKnife.bind(this, itemView);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            listener.onRecyclerClick(view, getAdapterPosition());
         }
     }
 }

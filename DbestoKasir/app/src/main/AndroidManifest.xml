@@ -3,7 +3,9 @@
     package="com.ibnu.dbestokasir">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-feature android:name="android.hardware.camera"/>
+
+    <uses-feature android:name="android.hardware.camera" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -16,49 +18,52 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DbestoKasir"
         android:usesCleartextTraffic="true">
-
+        <activity android:name=".Pelayanan.History.HistoryActivity"></activity>
         <activity
             android:name=".SplashScreen"
             android:label="@string/app_name"
             android:noHistory="true"
             android:screenOrientation="landscape">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN"/>
-            <category android:name="android.intent.category.LAUNCHER"/>
-        </intent-filter>
-        </activity>
-
-        <activity android:name=".Pelayanan.QrPelayanan"
-            android:screenOrientation="landscape">
             <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Pelayanan.QrPelayanan"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".Pelayanan.PelayananMain">
             <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.GET_CONTENT" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".Presensi.QrPresensi"
+        <activity
+            android:name=".Presensi.QrPresensi"
             android:screenOrientation="landscape">
             <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.GET_CONTENT" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".Penilaian.PenilaianMain"
+        <activity
+            android:name=".Penilaian.PenilaianMain"
             android:screenOrientation="landscape">
             <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.GET_CONTENT" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".admin.RegisterActivity"
             android:screenOrientation="landscape">
@@ -68,15 +73,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".Presensi.PresensiBerhasil">
             <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.GET_CONTENT" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".admin.AdminMain"
+        <activity
+            android:name=".admin.AdminMain"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
@@ -84,8 +89,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".Penilaian.Terbaik.AdminPenilaian"
+        <activity
+            android:name=".Penilaian.Terbaik.AdminPenilaian"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
@@ -93,56 +98,61 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".MainActivity"
             android:screenOrientation="landscape">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-        </activity>
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
 
-<!--        meja pemesanan-->
-        <activity android:name=".Pelayanan.Meja.Pemesanan"
-            android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
-        <activity android:name=".Pelayanan.Meja.Pemesanan2"
-            android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
-            </intent-filter>
-        </activity>
-        <activity android:name=".Pelayanan.Meja.Pemesanan3"
-            android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
-            </intent-filter>
-        </activity>
-        <activity android:name=".Pelayanan.Meja.Pemesanan4"
-            android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
-            </intent-filter>
-        </activity>
-        <activity android:name=".Pelayanan.Meja.Pemesanan5"
-            android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
-            </intent-filter>
-        </activity>
-        <activity android:name=".Pelayanan.Meja.Pemesanan6"
-            android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
-            </intent-filter>
-        </activity>
 
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
+        </activity> <!-- meja pemesanan -->
+        <activity
+            android:name=".Pelayanan.Meja.Pemesanan"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Pelayanan.Meja.Pemesanan2"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Pelayanan.Meja.Pemesanan3"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Pelayanan.Meja.Pemesanan4"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Pelayanan.Meja.Pemesanan5"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Pelayanan.Meja.Pemesanan6"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT" />
+            </intent-filter>
+        </activity>
 
         <meta-data
             android:name="preloaded_fonts"

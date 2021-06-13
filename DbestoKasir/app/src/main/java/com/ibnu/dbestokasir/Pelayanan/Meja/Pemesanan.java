@@ -21,6 +21,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.annotations.NotNull;
+import com.ibnu.dbestokasir.Pelayanan.History.HistoryModel;
 import com.ibnu.dbestokasir.Pelayanan.PelayananMain;
 import com.ibnu.dbestokasir.Pelayanan.Pemesanan.CartLoadListener;
 import com.ibnu.dbestokasir.Pelayanan.Pemesanan.CartModel;
@@ -31,6 +33,8 @@ import com.ibnu.dbestokasir.Pelayanan.Pemesanan.Stringaddress;
 import com.ibnu.dbestokasir.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.lang.CharSequence;
 
@@ -49,7 +53,6 @@ public class Pemesanan extends AppCompatActivity implements PembayaranLoadListen
 
     PembayaranLoadListener pembayaranLoadListener;
     CartLoadListener cartLoadListener;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +78,80 @@ public class Pemesanan extends AppCompatActivity implements PembayaranLoadListen
         TextView textView = (TextView)toolbar.findViewById(R.id.toolbarTextView);
         textView.setText("Daftar Pesanan Meja 1");
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        proses.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Proses();
+            }
+        });
     }
 
+    private void Proses() {
+        // tarik table cart
+        List<PembayaranModel> pembayaranModels = new ArrayList<>();
+        FirebaseDatabase.
+                getInstance(stringaddress.firebaseDbesto).
+                getReference("pembayaran").child("1").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        PembayaranModel pembayaranModel = dataSnapshot.getValue(PembayaranModel.class);
+                        pembayaranModel.setKey(dataSnapshot.getKey());
+                        pembayaranModels.add(pembayaranModel);
+
+                        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
+                                .getReference("pembayaran").child("1").child(pembayaranModel.getKey())
+                                .removeValue();
+
+                        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
+                                .getReference("cart").child("1").child(pembayaranModel.getKey())
+                                .removeValue();
+
+                        //masukan data ke table pembayaran
+                        Date waktu = Calendar.getInstance().getTime();
+
+                        DatabaseReference dbPemesanan = FirebaseDatabase.
+                                getInstance(stringaddress.firebaseDbesto).
+                                getReference("history").child(""+waktu);
+
+                        dbPemesanan.child(pembayaranModel.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                {
+                                    HistoryModel historyModel = new HistoryModel();
+                                    historyModel.setKey(""+waktu);
+                                    historyModel.setNamaMakanan(pembayaranModel.getNamaMakanan());
+                                    historyModel.setHarga(pembayaranModel.getHarga());
+                                    historyModel.setGambar(pembayaranModel.getGambar());
+                                    historyModel.setTotalPrice((pembayaranModel.getTotalPrice()));
+                                    historyModel.setQuantity(pembayaranModel.getQuantity());
+
+                                    dbPemesanan.child(pembayaranModel.getKey())
+                                            .setValue(historyModel);
+
+                                    Intent proses = new Intent(Pemesanan.this, PelayananMain.class);
+                                    startActivity(proses);
+
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                                cartLoadListener.onCartLoadFailed(error.getMessage());
+                            }
+                        });
+
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                cartLoadListener.onCartLoadFailed(error.getMessage());
+            }
+        });
+    }
 
     @Override
     protected void onResume() {
