@@ -21,7 +21,6 @@ import kaisar_pajar_oktavianus_entiman.tugasahir.model.NomorMeja;
 
 public class HalamanScan extends AppCompatActivity {
     CardView btnScan;
-    String hasilscan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +34,11 @@ public class HalamanScan extends AppCompatActivity {
             public void onClick(View view) {
                 IntentIntegrator intentIntegrator = new IntentIntegrator(HalamanScan.this);
                 //set prompt text
-                intentIntegrator.setPrompt("For flas use voume up key");
+                intentIntegrator.setPrompt("Arahkan pada QR Code yang tertera di meja\n\n\n\n\n\n\n\n");
                 //set beep
-                intentIntegrator.setBeepEnabled(true);
+                intentIntegrator.setBeepEnabled(false);
+                //set lampu
+                intentIntegrator.setTorchEnabled(false);
                 //set locked orientation
                 intentIntegrator.setOrientationLocked(true);
                 //set capture activity
@@ -60,6 +61,7 @@ public class HalamanScan extends AppCompatActivity {
             NomorMeja.setNomormeja(intentResult.getContents());
             Intent utama = new Intent(this, Menu.class);
             startActivity(utama);
+            finish();
         }
         if (intentResult.getContents() != null && !intentResult.getContents().equals("admin")) {
             AlertDialog.Builder builder = new AlertDialog.Builder(HalamanScan.this);

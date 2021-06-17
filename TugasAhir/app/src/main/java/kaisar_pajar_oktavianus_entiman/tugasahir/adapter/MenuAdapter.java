@@ -68,6 +68,10 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyMenuViewHold
         Glide.with(context).load(menuModelList.get(position).getGambar()).into(holder.imageView);
         holder.txtNama.setText(new StringBuilder().append(menuModelList.get(position).getNama()));
         holder.txtDeskripsi.setText(new StringBuilder().append(menuModelList.get(position).getDeskripsi()));
+        if (menuModelList.get(position).getStok() == 0)
+            holder.txtTersedia.setText(new StringBuilder("Tidak tersedia"));
+        if (menuModelList.get(position).getStok() > 0)
+            holder.txtTersedia.setText(new StringBuilder("Tersedia : ").append(menuModelList.get(position).getStok()));
         holder.txtHarga.setText(new StringBuilder("Rp").append(menuModelList.get(position).getHarga()));
 
         holder.setListener((view, adapterPosition) -> {
@@ -97,13 +101,13 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyMenuViewHold
 
                     useCart.child(menuModel.getKey()).updateChildren(updateData).
                             addOnSuccessListener(aVoid -> {
-                                cartLoadListener.onCartLoadFailed(cartModel.getNamaMakanan() + " ditambahkan ke keranjang");
+                                cartLoadListener.onCartLoadFailed(cartModel.getNama() + " ditambahkan ke keranjang");
                             })
                             .addOnFailureListener(e -> cartLoadListener.onCartLoadFailed(e.getMessage()));
                 } else //jika belum ada item dicart
                 {
                     CartModel cartModel = new CartModel();
-                    cartModel.setNamaMakanan(menuModel.getNama());
+                    cartModel.setNama(menuModel.getNama());
                     cartModel.setDeskripsi(menuModel.getDeskripsi());
                     cartModel.setHarga(menuModel.getHarga());
                     cartModel.setGambar(menuModel.getGambar());
@@ -115,7 +119,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyMenuViewHold
 
                     useCart.child(menuModel.getKey())
                             .setValue(cartModel)
-                            .addOnSuccessListener(aVoid -> cartLoadListener.onCartLoadFailed(cartModel.getNamaMakanan() + " ditambahkan ke keranjang"))
+                            .addOnSuccessListener(aVoid -> cartLoadListener.onCartLoadFailed(cartModel.getNama() + " ditambahkan ke keranjang"))
                             .addOnFailureListener(e -> cartLoadListener.onCartLoadFailed(e.getMessage()));
 
                 }
@@ -144,6 +148,8 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyMenuViewHold
         TextView txtDeskripsi;
         @BindView(R.id.txtHarga)
         TextView txtHarga;
+        @BindView(R.id.txtStok)
+        TextView txtTersedia;
 
         RecyclerViewListener listener;
 

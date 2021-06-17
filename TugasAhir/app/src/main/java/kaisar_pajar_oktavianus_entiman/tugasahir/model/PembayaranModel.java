@@ -1,16 +1,16 @@
 package kaisar_pajar_oktavianus_entiman.tugasahir.model;
 
 public class PembayaranModel {
-    String key, namaMakanan, harga, gambar;
+    String key, nama, harga, gambar;
     int quantity;
     float totalPrice;
 
     public PembayaranModel() {
     }
 
-    public PembayaranModel(String key, String namaMakanan, String harga, String gambar, int quantity, float totalPrice) {
+    public PembayaranModel(String key, String nama, String harga, String gambar, int quantity, float totalPrice) {
         this.key = key;
-        this.namaMakanan = namaMakanan;
+        this.nama = nama;
         this.harga = harga;
         this.gambar = gambar;
         this.quantity = quantity;
@@ -25,12 +25,12 @@ public class PembayaranModel {
         this.key = key;
     }
 
-    public String getNamaMakanan() {
-        return namaMakanan;
+    public String getNama() {
+        return nama;
     }
 
-    public void setNamaMakanan(String namaMakanan) {
-        this.namaMakanan = namaMakanan;
+    public void setNama(String nama) {
+        this.nama = nama;
     }
 
     public String getHarga() {

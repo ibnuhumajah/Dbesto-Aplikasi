@@ -8,11 +8,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -44,8 +46,10 @@ import butterknife.ButterKnife;
 import kaisar_pajar_oktavianus_entiman.tugasahir.adapter.ChartAdapter;
 import kaisar_pajar_oktavianus_entiman.tugasahir.adapter.NotaAdapter;
 import kaisar_pajar_oktavianus_entiman.tugasahir.eventbus.UpdateCartEvent;
+import kaisar_pajar_oktavianus_entiman.tugasahir.eventbus.UpdateCartEventonCart;
 import kaisar_pajar_oktavianus_entiman.tugasahir.listener.CartLoadListener;
 import kaisar_pajar_oktavianus_entiman.tugasahir.model.CartModel;
+import kaisar_pajar_oktavianus_entiman.tugasahir.model.KategoriModel;
 import kaisar_pajar_oktavianus_entiman.tugasahir.model.MenuModel;
 import kaisar_pajar_oktavianus_entiman.tugasahir.model.NomorMeja;
 import kaisar_pajar_oktavianus_entiman.tugasahir.model.NotaModel;
@@ -61,7 +65,7 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
     ImageView btnBack;
     @BindView(R.id.mainLayout)
     RelativeLayout mainLayout;
-    FloatingActionButton btnBayarlangsung, btnDanaPayment;
+    FloatingActionButton btnBayar, btnDanaPayment;
 
     Stringaddress stringaddress;
     String nomormeja = NomorMeja.getNomormeja();
@@ -78,14 +82,14 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
 
     @Override
     protected void onStop() {
-        if (EventBus.getDefault().hasSubscriberForEvent(UpdateCartEvent.class))
-            EventBus.getDefault().removeStickyEvent(UpdateCartEvent.class);
+        if (EventBus.getDefault().hasSubscriberForEvent(UpdateCartEventonCart.class))
+            EventBus.getDefault().removeStickyEvent(UpdateCartEventonCart.class);
         EventBus.getDefault().unregister(this);
         super.onStop();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void onUpdateCart(UpdateCartEvent event) {
+    public void onUpdateCart(UpdateCartEventonCart event) {
         loadCartDariFirebase();
     }
 
@@ -94,169 +98,270 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
-        btnBayarlangsung = findViewById(R.id.btnBayarlangsung);
+        btnBayar = findViewById(R.id.btnBayarlangsung);
         Drawable drawable = getResources().getDrawable(R.drawable.ic_baseline_payment_24);
         Drawable drawablWhite = drawable.getConstantState().newDrawable();
         drawablWhite.mutate().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
-        btnBayarlangsung.setImageDrawable(drawablWhite);
+        btnBayar.setImageDrawable(drawablWhite);
+
+        btnBayar.setOnClickListener(view -> {
+            FirebaseDatabase
+                    .getInstance(stringaddress.firebaseDbesto)
+                    .getReference("cart").child(nomormeja)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                final BottomSheetDialog bottomSheetDialog2 = new BottomSheetDialog(CartActivity.this);
+                                bottomSheetDialog2.setContentView(R.layout.bottom_sheet_dialog);
+
+                                bottomSheetDialog2.setCanceledOnTouchOutside(false);
+
+                                LinearLayout bottom_sheet_process = bottomSheetDialog2.findViewById(R.id.bottom_sheet_process);
+                                LinearLayout bottom_sheet_validasi = bottomSheetDialog2.findViewById(R.id.bottom_sheet_validasi);
+                                CardView btn_BayaraLangsung = bottomSheetDialog2.findViewById(R.id.btn_Bayarlangsung);
+                                CardView btn_Dana = bottomSheetDialog2.findViewById(R.id.btn_Online);
+                                CardView btn_cancel = bottomSheetDialog2.findViewById(R.id.btn_cancel2);
+                                CardView btn_Bayar = bottomSheetDialog2.findViewById(R.id.btn_Ya);
+                                CardView btn_cancelBayar = bottomSheetDialog2.findViewById(R.id.btn_cancelBayar);
+                                bottom_sheet_process.setVisibility(View.VISIBLE);
+
+                                btn_BayaraLangsung.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                        bottom_sheet_process.setVisibility(View.GONE);
+                                        bottom_sheet_validasi.setVisibility(View.VISIBLE);
+
+                                        btn_Bayar.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                bayarLangsung();
+                                                final BottomSheetDialog bottomSheetDialogNota = new BottomSheetDialog(CartActivity.this);
+                                                bottomSheetDialogNota.setContentView(R.layout.nota);
+                                                bottomSheetDialogNota.setCanceledOnTouchOutside(false);
+
+                                                RecyclerView nota = bottomSheetDialogNota.findViewById(R.id.recyclerNota);
+                                                TextView totalBayarnota = bottomSheetDialogNota.findViewById(R.id.totalBayarNota);
+
+                                                RecyclerView.LayoutManager mManager;
+                                                mManager = new LinearLayoutManager(CartActivity.this, LinearLayoutManager.VERTICAL, false);
+                                                nota.setLayoutManager(mManager);
+
+                                                List<NotaModel> notaModels = new ArrayList<>();
+                                                FirebaseDatabase
+                                                        .getInstance(stringaddress.firebaseDbesto)
+                                                        .getReference("cart").child(nomormeja)
+                                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                                                if (snapshot.exists()) {
+                                                                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                                                        NotaModel notaModel = dataSnapshot.getValue(NotaModel.class);
+                                                                        notaModel.setKey(dataSnapshot.getKey());
+                                                                        notaModels.add(notaModel);
+                                                                    }
+
+                                                                    double sum = 0;
+                                                                    for (NotaModel notaModel : notaModels) {
+                                                                        sum += notaModel.getTotalPrice();
+                                                                    }
+                                                                    totalBayarnota.setText(new StringBuilder("Total bayar = Rp").append(sum) + "00");
+
+                                                                    NotaAdapter notaAdapter = new NotaAdapter(getApplicationContext(), notaModels);
+                                                                    nota.setAdapter(notaAdapter);
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                                                                cartLoadListener.onCartLoadFailed(error.getMessage());
+                                                            }
+                                                        });
+                                                bottomSheetDialog2.hide();
+                                                bottomSheetDialogNota.show();
+                                            }
+                                        });
+
+                                        btn_cancelBayar.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                bottom_sheet_validasi.setVisibility(View.GONE);
+                                                bottom_sheet_process.setVisibility(View.VISIBLE);
+                                            }
+                                        });
+//                    bottomSheetDialog2.hide();
+
+//                    final BottomSheetDialog bottomSheetDialogValidasi = new BottomSheetDialog(CartActivity.this);
+//                    bottomSheetDialogValidasi.setContentView(R.layout.bottom_sheet_dialog);
 
 
-        btnBayarlangsung.setOnClickListener(view -> {
-            final BottomSheetDialog bottomSheetDialog2 = new BottomSheetDialog(this);
-            bottomSheetDialog2.setContentView(R.layout.bottom_sheet_dialog);
-
-            bottomSheetDialog2.setCanceledOnTouchOutside(false);
-
-            LinearLayout bottom_sheet_process = bottomSheetDialog2.findViewById(R.id.bottom_sheet_process);
-            CardView btn_BayaraLangsung = bottomSheetDialog2.findViewById(R.id.btn_Bayarlangsung);
-            CardView btn_Dana = bottomSheetDialog2.findViewById(R.id.btn_Online);
-            CardView btn_cancel = bottomSheetDialog2.findViewById(R.id.btn_cancel2);
-            bottom_sheet_process.setVisibility(View.VISIBLE);
-
-            btn_BayaraLangsung.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-////                        fungsi yes pada bottom sheet
-                    bayarLangsung();
-
-                    bottomSheetDialog2.hide();
-
-                    final BottomSheetDialog bottomSheetDialogNota = new BottomSheetDialog(CartActivity.this);
-                    bottomSheetDialogNota.setContentView(R.layout.nota);
-                    bottomSheetDialogNota.setCanceledOnTouchOutside(false);
-
-                    RecyclerView nota = bottomSheetDialogNota.findViewById(R.id.recyclerNota);
-                    TextView totalBayarnota = bottomSheetDialogNota.findViewById(R.id.totalBayarNota);
-
-                    RecyclerView.LayoutManager mManager;
-                    mManager = new LinearLayoutManager(CartActivity.this, LinearLayoutManager.VERTICAL, false);
-                    nota.setLayoutManager(mManager);
-
-                    List<NotaModel> notaModels = new ArrayList<>();
-                    FirebaseDatabase
-                            .getInstance(stringaddress.firebaseDbesto)
-                            .getReference("cart").child(nomormeja)
-                            .addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                                    if (snapshot.exists()) {
-                                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                            NotaModel notaModel = dataSnapshot.getValue(NotaModel.class);
-                                            notaModel.setKey(dataSnapshot.getKey());
-                                            notaModels.add(notaModel);
-                                        }
-
-                                        double sum = 0;
-                                        for (NotaModel notaModel : notaModels) {
-                                            sum += notaModel.getTotalPrice();
-                                        }
-                                        totalBayarnota.setText(new StringBuilder("Total bayar = Rp").append(sum) + "00");
-
-//                            mManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-//                            recyclerView.setLayoutManager(mManager);
-                                        NotaAdapter notaAdapter = new NotaAdapter(getApplicationContext(), notaModels);
-                                        nota.setAdapter(notaAdapter);
                                     }
-                                }
-                                @Override
-                                public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                                    cartLoadListener.onCartLoadFailed(error.getMessage());
-                                }
-                            });
-                    bottomSheetDialogNota.show();
-                }
-            });
-            btn_Dana.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-//                        fungsi yes pada bottom sheet
-//                    Intent i = new Intent(Intent.ACTION_VIEW, dana_);
-                    Toast.makeText(CartActivity.this, "DANA", Toast.LENGTH_SHORT).show();
-//                    startActivity(i);
-                    bottomSheetDialog2.hide();
-                }
-            });
+                                });
+                                btn_Dana.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
 
-            btn_cancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+                                        bottom_sheet_process.setVisibility(View.GONE);
+                                        bottom_sheet_validasi.setVisibility(View.VISIBLE);
+
+                                        btn_Bayar.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                bayarLangsung();
+                                                final BottomSheetDialog bottomSheetDialogNota = new BottomSheetDialog(CartActivity.this);
+                                                bottomSheetDialogNota.setContentView(R.layout.nota);
+                                                bottomSheetDialogNota.setCanceledOnTouchOutside(false);
+
+                                                LinearLayout notadana = bottomSheetDialogNota.findViewById(R.id.notaDana);
+                                                LinearLayout notalangsung = bottomSheetDialogNota.findViewById(R.id.notaLangsung);
+                                                RecyclerView nota = bottomSheetDialogNota.findViewById(R.id.recyclerNotaDana);
+                                                TextView totalBayarnota = bottomSheetDialogNota.findViewById(R.id.totalBayarNotaDana);
+                                                CardView cardDana = bottomSheetDialogNota.findViewById(R.id.bayarDana);
+
+                                                notadana.setVisibility(View.VISIBLE);
+                                                notalangsung.setVisibility(View.GONE);
+
+                                                RecyclerView.LayoutManager mManager;
+                                                mManager = new LinearLayoutManager(CartActivity.this, LinearLayoutManager.VERTICAL, false);
+                                                nota.setLayoutManager(mManager);
+
+                                                List<NotaModel> notaModels = new ArrayList<>();
+                                                FirebaseDatabase
+                                                        .getInstance(stringaddress.firebaseDbesto)
+                                                        .getReference("cart").child(nomormeja)
+                                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                                                if (snapshot.exists()) {
+                                                                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                                                        NotaModel notaModel = dataSnapshot.getValue(NotaModel.class);
+                                                                        notaModel.setKey(dataSnapshot.getKey());
+                                                                        notaModels.add(notaModel);
+                                                                    }
+
+                                                                    double sum = 0;
+                                                                    for (NotaModel notaModel : notaModels) {
+                                                                        sum += notaModel.getTotalPrice();
+                                                                    }
+                                                                    totalBayarnota.setText(new StringBuilder("Total bayar = Rp").append(sum) + "00");
+                                                                    cardDana.setOnClickListener(new View.OnClickListener() {
+                                                                        @Override
+                                                                        public void onClick(View view) {
+                                                                            Intent i = new Intent(Intent.ACTION_VIEW, dana_);
+                                                                            startActivity(i);
+//                                                                            Toast.makeText(CartActivity.this, "DANA", Toast.LENGTH_SHORT).show();
+                                                                            bottomSheetDialog2.hide();
+                                                                        }
+                                                                    });
+
+                                                                    NotaAdapter notaAdapter = new NotaAdapter(getApplicationContext(), notaModels);
+                                                                    nota.setAdapter(notaAdapter);
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                                                                cartLoadListener.onCartLoadFailed(error.getMessage());
+                                                            }
+                                                        });
+                                                bottomSheetDialog2.hide();
+                                                bottomSheetDialogNota.show();
+                                            }
+                                        });
+
+                                        btn_cancelBayar.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                bottom_sheet_validasi.setVisibility(View.GONE);
+                                                bottom_sheet_process.setVisibility(View.VISIBLE);
+                                            }
+                                        });
+
+//
+//
+                                    }
+                                });
+
+                                btn_cancel.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
 //                        fungsi cancel bottom sheet
-                    bottomSheetDialog2.hide();
+                                        bottomSheetDialog2.hide();
 //                    tx_numberOfRuns.setText("1");
-                }
-            });
-            bottomSheetDialog2.show();
-    });
+                                    }
+                                });
+                                bottomSheetDialog2.show();
+                            }
+                            if (!snapshot.exists()) {
+                                cartLoadListener.onCartLoadFailed("Pesanan belum ada ...");
+                            }
+                        }
 
-    init();
+                        @Override
+                        public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                            cartLoadListener.onCartLoadFailed(error.getMessage());
+                        }
+                    });
 
-    loadCartDariFirebase();
+        });
 
-}
+        init();
+
+        loadCartDariFirebase();
+
+    }
 
     void bayarLangsung() {
-        // tarik table cart
+        //tarik cart
         List<CartModel> cartModels = new ArrayList<>();
-        FirebaseDatabase.
-                getInstance(stringaddress.firebaseDbesto).
-                getReference("cart").child(nomormeja).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        CartModel cartModel = dataSnapshot.getValue(CartModel.class);
-                        cartModel.setKey(dataSnapshot.getKey());
-                        cartModels.add(cartModel);
+        FirebaseDatabase
+                .getInstance(stringaddress.firebaseDbesto)
+                .getReference("cart").child(nomormeja)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                CartModel cartModel = dataSnapshot.getValue(CartModel.class);
+                                cartModel.setKey(dataSnapshot.getKey());
+                                cartModels.add(cartModel);
 
-                        //masukan data ke table pembayaran
-                        DatabaseReference useCart = FirebaseDatabase.
-                                getInstance(stringaddress.firebaseDbesto).
-                                getReference("pembayaran").child(nomormeja);
 
-                        useCart.child(cartModel.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                                {
-                                    PembayaranModel pembayaranModel = new PembayaranModel();
-                                    pembayaranModel.setNamaMakanan(cartModel.getNamaMakanan());
-                                    pembayaranModel.setHarga(cartModel.getHarga());
-                                    pembayaranModel.setKey(cartModel.getKey());
-                                    pembayaranModel.setGambar(cartModel.getGambar());
-                                    pembayaranModel.setTotalPrice((cartModel.getTotalPrice() * 1000));
-                                    pembayaranModel.setQuantity(cartModel.getQuantity());
-
-                                    useCart.child(cartModel.getKey())
-                                            .setValue(pembayaranModel);
-
-                                    //updatestok
-                                    List<MenuModel> menuModels = new ArrayList<>();
-                                    FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
-                                            .getReference("menuMakanan")
-                                            .addListenerForSingleValueEvent(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                                                    if (snapshot.exists()) {
-                                                        for (DataSnapshot menuSnapshot : snapshot.getChildren()) {
-                                                            MenuModel menuModel = menuSnapshot.getValue(MenuModel.class);
-                                                            menuModel.setKey(menuSnapshot.getKey());
+                                //update stok
+                                List<MenuModel> menuModels = new ArrayList<>();
+                                FirebaseDatabase
+                                        .getInstance(stringaddress.firebaseDbesto)
+                                        .getReference("menu")
+                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                                if (snapshot.exists()) {
+                                                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                                        KategoriModel kategoriModel = new KategoriModel();
+                                                        kategoriModel.setKategori(dataSnapshot.getKey());
+                                                        for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                                                            Log.e("response :", dataSnapshot1.toString());
+                                                            MenuModel menuModel = dataSnapshot1.getValue(MenuModel.class);
+                                                            menuModel.setKey(dataSnapshot1.getKey());
                                                             menuModels.add(menuModel);
 
                                                             DatabaseReference stok = FirebaseDatabase.
                                                                     getInstance(stringaddress.firebaseDbesto).
-                                                                    getReference("menuMakanan");
+                                                                    getReference("menu");
 
-                                                            stok.child(pembayaranModel.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            stok.child(kategoriModel.getKategori()).addListenerForSingleValueEvent(new ValueEventListener() {
                                                                 @Override
                                                                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                                                                    if (snapshot.exists()) //jika sudah ada item di cart
-                                                                    {
-                                                                        MenuModel menuModel1 = snapshot.getValue(MenuModel.class);
-                                                                        Map<String, Object> updateData = new HashMap<>();
-                                                                        updateData.put("stok", menuModel1.getStok() - pembayaranModel.getQuantity());
+                                                                    Log.e("data :", snapshot.getKey());
+                                                                    for (DataSnapshot dataSnapshot2 : snapshot.getChildren()) {
+                                                                        if (dataSnapshot2.getKey().equals(cartModel.getKey())) {
+                                                                            Map<String, Object> updateData = new HashMap<>();
+                                                                            updateData.put("stok", cartModel.getStok() - cartModel.getQuantity());
+                                                                            stok.child(kategoriModel.getKategori()).child(cartModel.getKey()).updateChildren(updateData);
 
-                                                                        stok.child(pembayaranModel.getKey()).updateChildren(updateData);
+                                                                        }
                                                                     }
-                                                                    EventBus.getDefault().postSticky(new UpdateCartEvent());
                                                                 }
 
                                                                 @Override
@@ -267,32 +372,62 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
                                                         }
                                                     }
                                                 }
+                                            }
 
-                                                @Override
-                                                public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                                                }
-                                            });
-                                }
-                                EventBus.getDefault().postSticky(new UpdateCartEvent());
+                                            @Override
+                                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                                                cartLoadListener.onCartLoadFailed(error.getMessage());
+                                            }
+                                        });
+
+
+                                //buat tabel pembayaran
+                                DatabaseReference pembayaran = FirebaseDatabase.
+                                        getInstance(stringaddress.firebaseDbesto).
+                                        getReference("pembayaran").child(nomormeja);
+
+                                pembayaran.child(cartModel.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                        {
+                                            PembayaranModel pembayaranModel = new PembayaranModel();
+                                            pembayaranModel.setKey(cartModel.getKey());
+                                            pembayaranModel.setGambar(cartModel.getGambar());
+                                            pembayaranModel.setNama(cartModel.getNama());
+                                            pembayaranModel.setHarga(cartModel.getHarga());
+                                            pembayaranModel.setQuantity(cartModel.getQuantity());
+                                            pembayaranModel.setTotalPrice((cartModel.getTotalPrice() * 1000));
+
+                                            pembayaran.child(cartModel.getKey())
+                                                    .setValue(pembayaranModel)
+                                                    .addOnSuccessListener(aVoid -> cartLoadListener.onCartLoadFailed("Pesanan anda diterima oleh kasir"))
+                                                    .addOnFailureListener(e -> cartLoadListener.onCartLoadFailed(e.getMessage()));
+
+                                            //hapus cart
+                                            FirebaseDatabase.
+                                                    getInstance(stringaddress.firebaseDbesto)
+                                                    .getReference("cart").child(nomormeja)
+                                                    .removeValue().addOnSuccessListener(aVoid -> EventBus.getDefault().postSticky(new UpdateCartEventonCart()));
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                                        cartLoadListener.onCartLoadFailed(error.getMessage());
+                                    }
+                                });
                             }
-
-                            @Override
-                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                                cartLoadListener.onCartLoadFailed(error.getMessage());
-                            }
-                        });
-
+                        }
+                        if (!snapshot.exists()) {
+                            Toast.makeText(CartActivity.this, "data cart kosong", Toast.LENGTH_SHORT).show();
+                        }
                     }
-//                        cartLoadListener.onCartLoadSuccess(cartModels);
-                } else {
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                cartLoadListener.onCartLoadFailed(error.getMessage());
-            }
-        });
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                        cartLoadListener.onCartLoadFailed(error.getMessage());
+                    }
+                });
     }
 
     private void loadCartDariFirebase() {
@@ -301,34 +436,28 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
                 .getInstance(stringaddress.firebaseDbesto)
                 .getReference("cart").child(nomormeja)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        CartModel cartModel = dataSnapshot.getValue(CartModel.class);
-                        cartModel.setKey(dataSnapshot.getKey());
-                        cartModels.add(cartModel);
-                        recyclerView.setVisibility(View.VISIBLE);
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                CartModel cartModel = dataSnapshot.getValue(CartModel.class);
+                                cartModel.setKey(dataSnapshot.getKey());
+                                cartModels.add(cartModel);
+                            }
+                            recyclerView.setVisibility(View.VISIBLE);
+                            cartLoadListener.onCartLoadSuccess(cartModels);
+                        }
+                        if (!snapshot.exists()) {
+                            recyclerView.setVisibility(View.INVISIBLE);
+                            txtTotal.setText("Total");
+                        }
                     }
-                    cartLoadListener.onCartLoadSuccess(cartModels);
-                }
-                if (!snapshot.exists()){
-                    recyclerView.setVisibility(View.INVISIBLE);
-                    recyclerView.removeAllViewsInLayout();
-                    txtTotal.setText("Total");
-                }
-                else {
-//                    recyclerView.removeAllViewsInLayout();
-//                    recyclerView.setVisibility(View.INVISIBLE);
-//                    txtTotal.setText("Total");
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                cartLoadListener.onCartLoadFailed(error.getMessage());
-            }
-        });
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                        cartLoadListener.onCartLoadFailed(error.getMessage());
+                    }
+                });
     }
 
     private void init() {
@@ -357,4 +486,123 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
     public void onCartLoadFailed(String message) {
         Snackbar.make(mainLayout, message, Snackbar.LENGTH_LONG).show();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadCartDariFirebase();
+    }
 }
+
+
+//bayar langsung
+// tarik table cart
+//List<CartModel> cartModels = new ArrayList<>();
+//        FirebaseDatabase.
+//                getInstance(stringaddress.firebaseDbesto).
+//                getReference("cart").child(nomormeja).addListenerForSingleValueEvent(new ValueEventListener() {
+//@Override
+//public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+//        if (snapshot.exists()) {
+//        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+//        CartModel cartModel = dataSnapshot.getValue(CartModel.class);
+//        cartModel.setKey(dataSnapshot.getKey());
+//        cartModels.add(cartModel);
+//
+//        //masukan data ke table pembayaran
+//        DatabaseReferen
+//        ce useCart = FirebaseDatabase.
+//        getInstance(stringaddress.firebaseDbesto).
+//        getReference("pembayaran").child(nomormeja);
+//
+//        useCart.child(cartModel.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+//@Override
+//public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+//        {
+//        PembayaranModel pembayaranModel = new PembayaranModel();
+//        pembayaranModel.setNamaMakanan(cartModel.getNamaMakanan());
+//        pembayaranModel.setHarga(cartModel.getHarga());
+//        pembayaranModel.setKey(cartModel.getKey());
+//        pembayaranModel.setGambar(cartModel.getGambar());
+//        pembayaranModel.setTotalPrice((cartModel.getTotalPrice() * 1000));
+//        pembayaranModel.setQuantity(cartModel.getQuantity());
+//
+//        useCart.child(cartModel.getKey())
+//        .setValue(pembayaranModel);
+//
+//        FirebaseDatabase.
+//        getInstance(stringaddress.firebaseDbesto)
+//        .getReference("cart").child(nomormeja).child(cartModel.getKey())
+//        .removeValue().addOnSuccessListener(aVoid -> EventBus.getDefault().postSticky(new UpdateCartEventonCart()));
+//
+//        //updatestok
+//        List<MenuModel> menuModels = new ArrayList<>();
+//        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
+//        .getReference("menu")
+//        .addListenerForSingleValueEvent(new ValueEventListener() {
+//@Override
+//public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+//        if (snapshot.exists()) {
+//        for (DataSnapshot menuSnapshot : snapshot.getChildren()) {
+//        for (DataSnapshot data : menuSnapshot.getChildren()) {
+//        MenuModel menuModel = data.getValue(MenuModel.class);
+//        menuModel.setKey(data.getKey());
+//        menuModels.add(menuModel);
+//
+//        DatabaseReference stok = FirebaseDatabase.
+//        getInstance(stringaddress.firebaseDbesto).
+//        getReference("menu");
+//
+//        stok.child(pembayaranModel.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+//@Override
+//public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+//        for (DataSnapshot stokSnap : snapshot.getChildren()) {
+//        for (DataSnapshot dataStok : stokSnap.getChildren()) {
+//        if (snapshot.exists()) {
+//
+//        MenuModel menuModel1 = dataStok.getValue(MenuModel.class);
+//        Map<String, Object> updateData = new HashMap<>();
+//        updateData.put("stok", menuModel1.getStok() - pembayaranModel.getQuantity());
+//
+//        stok.child(pembayaranModel.getKey()).updateChildren(updateData);
+//        }
+//        }
+//        }
+//
+//        }
+//
+//@Override
+//public void onCancelled(@NonNull @NotNull DatabaseError error) {
+//        cartLoadListener.onCartLoadFailed(error.getMessage());
+//        }
+//        });
+//        }
+//        }
+//        }
+//        }
+//
+//@Override
+//public void onCancelled(@NonNull @NotNull DatabaseError error) {
+//        cartLoadListener.onCartLoadFailed(error.getMessage());
+//        }
+//        });
+//        }
+//        }
+//
+//@Override
+//public void onCancelled(@NonNull @NotNull DatabaseError error) {
+//        cartLoadListener.onCartLoadFailed(error.getMessage());
+//        }
+//        });
+//
+//        }
+////                        cartLoadListener.onCartLoadSuccess(cartModels);
+//        } else {
+//        }
+//        }
+//
+//@Override
+//public void onCancelled(@NonNull @NotNull DatabaseError error) {
+//        cartLoadListener.onCartLoadFailed(error.getMessage());
+//        }
+//        });

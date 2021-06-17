@@ -61,7 +61,7 @@ public class PembayaranAdapter extends RecyclerView.Adapter<PembayaranAdapter.My
     @Override
     public void onBindViewHolder(@NonNull @NotNull PembayaranAdapter.MyPembayaranViewHolder holder, int position) {
         Glide.with(context).load(pembayaranModelList.get(position).getGambar()).into(holder.imgPemesanan);
-        holder.txtNama.setText(new StringBuilder().append(pembayaranModelList.get(position).getNamaMakanan()));
+        holder.txtNama.setText(new StringBuilder().append(pembayaranModelList.get(position).getNama()));
         holder.txtHarga.setText(new StringBuilder().append(pembayaranModelList.get(position).getHarga()));
         holder.txtQuantity.setText(new StringBuilder().append(pembayaranModelList.get(position).getQuantity()));
         holder.totalHarga.setText(new StringBuilder("Rp").append(pembayaranModelList.get(position).getTotalPrice()));

@@ -49,7 +49,7 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.HolderData> {
     @Override
     public void onBindViewHolder(@NonNull HolderData holder, int position) {
         NotaModel md = mItems.get(position);
-        holder.namaMenuNota.setText(md.getNamaMakanan());
+        holder.namaMenuNota.setText(md.getNama());
         holder.hargaNota.setText("Rp" + md.getHarga());
         holder.quantityNota.setText("X" + (md.getQuantity()));
         holder.totalHargaNota.setText("Rp" + md.getTotalPrice() +"00");

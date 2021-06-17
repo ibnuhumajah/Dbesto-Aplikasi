@@ -26,6 +26,7 @@ import butterknife.Unbinder;
 import kaisar_pajar_oktavianus_entiman.tugasahir.R;
 import kaisar_pajar_oktavianus_entiman.tugasahir.Stringaddress;
 import kaisar_pajar_oktavianus_entiman.tugasahir.eventbus.UpdateCartEvent;
+import kaisar_pajar_oktavianus_entiman.tugasahir.eventbus.UpdateCartEventonCart;
 import kaisar_pajar_oktavianus_entiman.tugasahir.model.CartModel;
 import kaisar_pajar_oktavianus_entiman.tugasahir.model.NomorMeja;
 
@@ -52,7 +53,7 @@ public class ChartAdapter extends RecyclerView.Adapter<ChartAdapter.CartViewHold
     @Override
     public void onBindViewHolder(@NonNull @NotNull CartViewHolder holder, int position) {
         Glide.with(context).load(cartModelList.get(position).getGambar()).into(holder.imgCart);
-        holder.txtNamaMenu.setText(new StringBuilder().append(cartModelList.get(position).getNamaMakanan()));
+        holder.txtNamaMenu.setText(new StringBuilder().append(cartModelList.get(position).getNama()));
         holder.txtHarga.setText(new StringBuilder("Rp").append(cartModelList.get(position).getHarga()));
         holder.txtQuantity.setText(new StringBuilder().append(cartModelList.get(position).getQuantity()));
 
@@ -93,8 +94,7 @@ public class ChartAdapter extends RecyclerView.Adapter<ChartAdapter.CartViewHold
         FirebaseDatabase.
                 getInstance(stringaddress.firebaseDbesto)
                 .getReference("cart").child(nomormeja).child(cartModel.getKey())
-                .removeValue().addOnSuccessListener(aVoid -> EventBus.getDefault().postSticky(new UpdateCartEvent()));
-
+                .removeValue().addOnSuccessListener(aVoid -> EventBus.getDefault().postSticky(new UpdateCartEventonCart()));
     }
 
     private void plusCartItem(CartViewHolder holder, CartModel cartModel) {
@@ -106,18 +106,18 @@ public class ChartAdapter extends RecyclerView.Adapter<ChartAdapter.CartViewHold
     }
 
     private void minusCartItem(CartViewHolder holder, CartModel cartModel) {
-            cartModel.setQuantity(cartModel.getQuantity() - 1);
-            cartModel.setTotalPrice(cartModel.getQuantity() * Float.parseFloat(cartModel.getHarga()));
+        cartModel.setQuantity(cartModel.getQuantity() - 1);
+        cartModel.setTotalPrice(cartModel.getQuantity() * Float.parseFloat(cartModel.getHarga()));
 
-            holder.txtQuantity.setText(new StringBuilder().append(cartModel.getQuantity()));
-            updateFirebase(cartModel);
+        holder.txtQuantity.setText(new StringBuilder().append(cartModel.getQuantity()));
+        updateFirebase(cartModel);
     }
 
     private void updateFirebase(CartModel cartModel) {
         FirebaseDatabase.
                 getInstance(stringaddress.firebaseDbesto).
                 getReference("cart").child(nomormeja).child(cartModel.getKey()).
-                setValue(cartModel).addOnSuccessListener(aVoid -> EventBus.getDefault().postSticky(new UpdateCartEvent()));
+                setValue(cartModel).addOnSuccessListener(aVoid -> EventBus.getDefault().postSticky(new UpdateCartEventonCart()));
     }
 
     @Override

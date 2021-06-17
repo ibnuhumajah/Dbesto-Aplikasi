@@ -1,18 +1,18 @@
 package kaisar_pajar_oktavianus_entiman.tugasahir.model;
 
 public class NotaModel {
-    String namaMakanan, harga, key;
+    String nama, harga, key;
     int quantity;
     float totalPrice;
 
     public NotaModel(){}
 
-    public String getNamaMakanan() {
-        return namaMakanan;
+    public String getNama() {
+        return nama;
     }
 
-    public void setNamaMakanan(String namaMakanan) {
-        this.namaMakanan = namaMakanan;
+    public void setNama(String nama) {
+        this.nama = nama;
     }
 
     public String getHarga() {

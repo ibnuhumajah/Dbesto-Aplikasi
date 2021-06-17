@@ -1,10 +1,12 @@
 package kaisar_pajar_oktavianus_entiman.tugasahir;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -32,7 +34,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import kaisar_pajar_oktavianus_entiman.tugasahir.adapter.AdaperMenu;
 import kaisar_pajar_oktavianus_entiman.tugasahir.adapter.MenuAdapter;
 import kaisar_pajar_oktavianus_entiman.tugasahir.eventbus.UpdateCartEvent;
 import kaisar_pajar_oktavianus_entiman.tugasahir.listener.CartLoadListener;
@@ -172,9 +173,7 @@ public class Menu extends AppCompatActivity implements MenuLoadListener, CartLoa
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                b ++;
-
-                badge.setText("");
+                kembali();
             }
         });
     }
@@ -371,24 +370,20 @@ public class Menu extends AppCompatActivity implements MenuLoadListener, CartLoa
 
     @Override
     public void onCartLoadSuccess(List<CartModel> cartModelList) {
-        int a = 0;
-
-            for (CartModel cartModel : cartModelList) {
-                a += cartModel.getQuantity();
-//            a = cartSum - (cartModel.getQuantity()-1);
-//            a += cartModel.getQuantity() - cartSum;
-            }
-        if (a > 0){
-            coverBadge.setVisibility(View.VISIBLE);
-            badge.setVisibility(View.VISIBLE);
-            badge.setText(String.valueOf(a));
-        }
-        if (a <= 0){
-            coverBadge.setVisibility(View.GONE);
-            badge.setVisibility(View.GONE);
-        }
-            //            cartSum += cartModel.getQuantity();
-
+//        int a = 0;
+//
+//            for (CartModel cartModel : cartModelList) {
+//                a += cartModel.getQuantity();
+//            }
+//        if (a > 0){
+//            coverBadge.setVisibility(View.VISIBLE);
+//            badge.setVisibility(View.VISIBLE);
+//            badge.setText(String.valueOf(a));
+//        }
+//        if (a <= 0){
+//            coverBadge.setVisibility(View.GONE);
+//            badge.setVisibility(View.GONE);
+//        }
     }
 
     @Override
@@ -416,7 +411,21 @@ public class Menu extends AppCompatActivity implements MenuLoadListener, CartLoa
                             cartModel.setKey(cartSnapshot.getKey());
                             cartModels.add(cartModel);
                         }
-                        cartLoadListener.onCartLoadSuccess(cartModels);
+//                        cartLoadListener.onCartLoadSuccess(cartModels);
+                        int a = 0;
+
+                        for (CartModel cartModel : cartModels) {
+                            a += cartModel.getQuantity();
+                        }
+                        if (a > 0){
+                            coverBadge.setVisibility(View.VISIBLE);
+                            badge.setVisibility(View.VISIBLE);
+                            badge.setText(String.valueOf(a));
+                        }
+                        if (a <= 0){
+                            coverBadge.setVisibility(View.GONE);
+                            badge.setVisibility(View.GONE);
+                        }
                     }
 
                     @Override
@@ -424,5 +433,34 @@ public class Menu extends AppCompatActivity implements MenuLoadListener, CartLoa
                         cartLoadListener.onCartLoadFailed(error.getMessage());
                     }
                 });
+    }
+
+    @Override
+    public void onBackPressed() {
+        kembali();
+    }
+
+    void kembali(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(Menu.this);
+        //settittle
+        builder.setTitle("Allert");
+        //setmessage
+        builder.setMessage("Ingin keluar dari halaman menu?");
+
+        builder.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent intent = new Intent(Menu.this, HalamanScan.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        builder.setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        builder.show();
     }
 }
