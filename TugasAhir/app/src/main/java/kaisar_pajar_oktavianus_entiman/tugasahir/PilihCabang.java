@@ -113,11 +113,11 @@ public class PilihCabang extends AppCompatActivity {
                 .setSound(customuri)
                 .setContentText(message);
 
-        Intent intent = new Intent(PilihCabang.this, PilihCabang.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent intenta = new Intent(PilihCabang.this, PilihCabang.class);
+        intenta.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(PilihCabang.this, 0,
-                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                intenta, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(
