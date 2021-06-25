@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -21,6 +22,7 @@ import kaisar_pajar_oktavianus_entiman.tugasahir.model.NomorMeja;
 
 public class HalamanScan extends AppCompatActivity {
     CardView btnScan;
+    TextView txtCabang;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +30,9 @@ public class HalamanScan extends AppCompatActivity {
         setContentView(R.layout.activity_halaman_scan);
 
         btnScan = findViewById(R.id.btnScan);
+        txtCabang = findViewById(R.id.txtSelamatdatang);
+
+        txtCabang.setText("Selamat datang di d'Besto\n"+NomorMeja.getNamacabangsel());
 
         btnScan.setOnClickListener(new View.OnClickListener() {
             @Override

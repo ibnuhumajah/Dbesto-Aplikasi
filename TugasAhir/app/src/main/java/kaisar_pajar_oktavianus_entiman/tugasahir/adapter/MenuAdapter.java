@@ -85,7 +85,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyMenuViewHold
 
     private void addToCart(MenuModel menuModel) {
         DatabaseReference useCart = FirebaseDatabase.
-                getInstance(stringaddress.firebaseDbesto).
+                getInstance(NomorMeja.getNamacabang()).
                 getReference("cart").child(nomormeja);
 
         useCart.child(menuModel.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {

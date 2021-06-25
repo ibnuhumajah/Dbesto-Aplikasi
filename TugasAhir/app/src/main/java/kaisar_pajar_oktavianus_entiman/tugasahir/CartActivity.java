@@ -3,10 +3,13 @@ package kaisar_pajar_oktavianus_entiman.tugasahir;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,6 +17,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -106,7 +110,7 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
 
         btnBayar.setOnClickListener(view -> {
             FirebaseDatabase
-                    .getInstance(stringaddress.firebaseDbesto)
+                    .getInstance(NomorMeja.getNamacabang())
                     .getReference("cart").child(nomormeja)
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -150,7 +154,7 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
 
                                                 List<NotaModel> notaModels = new ArrayList<>();
                                                 FirebaseDatabase
-                                                        .getInstance(stringaddress.firebaseDbesto)
+                                                        .getInstance(NomorMeja.getNamacabang())
                                                         .getReference("cart").child(nomormeja)
                                                         .addListenerForSingleValueEvent(new ValueEventListener() {
                                                             @Override
@@ -190,12 +194,6 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
                                                 bottom_sheet_process.setVisibility(View.VISIBLE);
                                             }
                                         });
-//                    bottomSheetDialog2.hide();
-
-//                    final BottomSheetDialog bottomSheetDialogValidasi = new BottomSheetDialog(CartActivity.this);
-//                    bottomSheetDialogValidasi.setContentView(R.layout.bottom_sheet_dialog);
-
-
                                     }
                                 });
                                 btn_Dana.setOnClickListener(new View.OnClickListener() {
@@ -228,7 +226,7 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
 
                                                 List<NotaModel> notaModels = new ArrayList<>();
                                                 FirebaseDatabase
-                                                        .getInstance(stringaddress.firebaseDbesto)
+                                                        .getInstance(NomorMeja.getNamacabang())
                                                         .getReference("cart").child(nomormeja)
                                                         .addListenerForSingleValueEvent(new ValueEventListener() {
                                                             @Override
@@ -316,7 +314,7 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
         //tarik cart
         List<CartModel> cartModels = new ArrayList<>();
         FirebaseDatabase
-                .getInstance(stringaddress.firebaseDbesto)
+                .getInstance(NomorMeja.getNamacabang())
                 .getReference("cart").child(nomormeja)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -331,7 +329,7 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
                                 //update stok
                                 List<MenuModel> menuModels = new ArrayList<>();
                                 FirebaseDatabase
-                                        .getInstance(stringaddress.firebaseDbesto)
+                                        .getInstance(NomorMeja.getNamacabang())
                                         .getReference("menu")
                                         .addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
@@ -347,7 +345,7 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
                                                             menuModels.add(menuModel);
 
                                                             DatabaseReference stok = FirebaseDatabase.
-                                                                    getInstance(stringaddress.firebaseDbesto).
+                                                                    getInstance(NomorMeja.getNamacabang()).
                                                                     getReference("menu");
 
                                                             stok.child(kategoriModel.getKategori()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -383,7 +381,7 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
 
                                 //buat tabel pembayaran
                                 DatabaseReference pembayaran = FirebaseDatabase.
-                                        getInstance(stringaddress.firebaseDbesto).
+                                        getInstance(NomorMeja.getNamacabang()).
                                         getReference("pembayaran").child(nomormeja);
 
                                 pembayaran.child(cartModel.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -405,7 +403,7 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
 
                                             //hapus cart
                                             FirebaseDatabase.
-                                                    getInstance(stringaddress.firebaseDbesto)
+                                                    getInstance(NomorMeja.getNamacabang())
                                                     .getReference("cart").child(nomormeja)
                                                     .removeValue().addOnSuccessListener(aVoid -> EventBus.getDefault().postSticky(new UpdateCartEventonCart()));
                                         }
@@ -433,7 +431,7 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
     private void loadCartDariFirebase() {
         List<CartModel> cartModels = new ArrayList<>();
         FirebaseDatabase
-                .getInstance(stringaddress.firebaseDbesto)
+                .getInstance(NomorMeja.getNamacabang())
                 .getReference("cart").child(nomormeja)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -492,117 +490,27 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
         super.onResume();
         loadCartDariFirebase();
     }
+
+    void baca_pesanan () {
+        //tambahin notifikasi taskbar kalo bisa
+    }
+
+    void notifikasi() {
+        String message = "this is a notification";
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(
+                CartActivity.this
+        )
+                .setSmallIcon(R.drawable.dbesto)
+                .setContentTitle("New Notification ")
+                .setContentText(message)
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setAutoCancel(true);
+
+        NotificationManager notificationManager = (NotificationManager)getSystemService(
+                Context.NOTIFICATION_SERVICE
+        );
+        notificationManager.notify(0, builder.build());
+    }
+
 }
-
-
-//bayar langsung
-// tarik table cart
-//List<CartModel> cartModels = new ArrayList<>();
-//        FirebaseDatabase.
-//                getInstance(stringaddress.firebaseDbesto).
-//                getReference("cart").child(nomormeja).addListenerForSingleValueEvent(new ValueEventListener() {
-//@Override
-//public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-//        if (snapshot.exists()) {
-//        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-//        CartModel cartModel = dataSnapshot.getValue(CartModel.class);
-//        cartModel.setKey(dataSnapshot.getKey());
-//        cartModels.add(cartModel);
-//
-//        //masukan data ke table pembayaran
-//        DatabaseReferen
-//        ce useCart = FirebaseDatabase.
-//        getInstance(stringaddress.firebaseDbesto).
-//        getReference("pembayaran").child(nomormeja);
-//
-//        useCart.child(cartModel.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
-//@Override
-//public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-//        {
-//        PembayaranModel pembayaranModel = new PembayaranModel();
-//        pembayaranModel.setNamaMakanan(cartModel.getNamaMakanan());
-//        pembayaranModel.setHarga(cartModel.getHarga());
-//        pembayaranModel.setKey(cartModel.getKey());
-//        pembayaranModel.setGambar(cartModel.getGambar());
-//        pembayaranModel.setTotalPrice((cartModel.getTotalPrice() * 1000));
-//        pembayaranModel.setQuantity(cartModel.getQuantity());
-//
-//        useCart.child(cartModel.getKey())
-//        .setValue(pembayaranModel);
-//
-//        FirebaseDatabase.
-//        getInstance(stringaddress.firebaseDbesto)
-//        .getReference("cart").child(nomormeja).child(cartModel.getKey())
-//        .removeValue().addOnSuccessListener(aVoid -> EventBus.getDefault().postSticky(new UpdateCartEventonCart()));
-//
-//        //updatestok
-//        List<MenuModel> menuModels = new ArrayList<>();
-//        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
-//        .getReference("menu")
-//        .addListenerForSingleValueEvent(new ValueEventListener() {
-//@Override
-//public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-//        if (snapshot.exists()) {
-//        for (DataSnapshot menuSnapshot : snapshot.getChildren()) {
-//        for (DataSnapshot data : menuSnapshot.getChildren()) {
-//        MenuModel menuModel = data.getValue(MenuModel.class);
-//        menuModel.setKey(data.getKey());
-//        menuModels.add(menuModel);
-//
-//        DatabaseReference stok = FirebaseDatabase.
-//        getInstance(stringaddress.firebaseDbesto).
-//        getReference("menu");
-//
-//        stok.child(pembayaranModel.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
-//@Override
-//public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-//        for (DataSnapshot stokSnap : snapshot.getChildren()) {
-//        for (DataSnapshot dataStok : stokSnap.getChildren()) {
-//        if (snapshot.exists()) {
-//
-//        MenuModel menuModel1 = dataStok.getValue(MenuModel.class);
-//        Map<String, Object> updateData = new HashMap<>();
-//        updateData.put("stok", menuModel1.getStok() - pembayaranModel.getQuantity());
-//
-//        stok.child(pembayaranModel.getKey()).updateChildren(updateData);
-//        }
-//        }
-//        }
-//
-//        }
-//
-//@Override
-//public void onCancelled(@NonNull @NotNull DatabaseError error) {
-//        cartLoadListener.onCartLoadFailed(error.getMessage());
-//        }
-//        });
-//        }
-//        }
-//        }
-//        }
-//
-//@Override
-//public void onCancelled(@NonNull @NotNull DatabaseError error) {
-//        cartLoadListener.onCartLoadFailed(error.getMessage());
-//        }
-//        });
-//        }
-//        }
-//
-//@Override
-//public void onCancelled(@NonNull @NotNull DatabaseError error) {
-//        cartLoadListener.onCartLoadFailed(error.getMessage());
-//        }
-//        });
-//
-//        }
-////                        cartLoadListener.onCartLoadSuccess(cartModels);
-//        } else {
-//        }
-//        }
-//
-//@Override
-//public void onCancelled(@NonNull @NotNull DatabaseError error) {
-//        cartLoadListener.onCartLoadFailed(error.getMessage());
-//        }
-//        });

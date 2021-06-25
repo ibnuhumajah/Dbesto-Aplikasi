@@ -15,16 +15,21 @@
         android:roundIcon="@drawable/logo_footer_white"
         android:supportsRtl="true"
         android:theme="@style/Theme.TugasAhir">
-        <activity android:name=".HalamanScan"
-            android:theme="@style/Themenoactionbar.TugasAhir"></activity>
-        <activity android:name=".MainActivity" />
+        <activity android:name=".PilihCabang"
+            android:theme="@style/Themenoactionbar.TugasAhir"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".HalamanScan"
+            android:theme="@style/Themenoactionbar.TugasAhir"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".CartActivity"
-            android:theme="@style/Themenoactionbar.TugasAhir" />
-        <activity android:name=".Pemesanan" />
+            android:theme="@style/Themenoactionbar.TugasAhir"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Menu"
-            android:theme="@style/Themenoactionbar.TugasAhir" />
+            android:theme="@style/Themenoactionbar.TugasAhir"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Capture"
             android:screenOrientation="portrait"
@@ -32,7 +37,8 @@
             android:theme="@style/zxing_CaptureTheme" />
         <activity
             android:name=".Splashscreen"
-            android:theme="@style/Themenoactionbar.TugasAhir">
+            android:theme="@style/Themenoactionbar.TugasAhir"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

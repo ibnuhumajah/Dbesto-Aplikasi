@@ -21,12 +21,14 @@
             android:src="@drawable/logo_footer_white" />
 
         <TextView
+            android:id="@+id/txtSelamatdatang"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:fontFamily="@font/poppins"
-            android:text="Selamat datang"
+            android:text="Selamat datang di d'Besto"
             android:textColor="#fff"
+            android:textAlignment="center"
             android:textSize="24sp" />
     </LinearLayout>
 

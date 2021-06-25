@@ -17,7 +17,7 @@ public class Splashscreen extends AppCompatActivity {
 
         new Handler().postDelayed(() -> {
             Intent splash = new Intent(Splashscreen.this,
-                    HalamanScan.class);
+                    PilihCabang.class);
             startActivity(splash);
             finish();
         }, durasiSplash);

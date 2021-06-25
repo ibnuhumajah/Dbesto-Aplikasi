@@ -180,7 +180,7 @@ public class Menu extends AppCompatActivity implements MenuLoadListener, CartLoa
 
     private void LoadMenuDariFirebase() {
         List<MenuModel> menuModels = new ArrayList<>();
-        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
+        FirebaseDatabase.getInstance(NomorMeja.getNamacabang())
                 .getReference("menu").child("friedChicken")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -204,7 +204,7 @@ public class Menu extends AppCompatActivity implements MenuLoadListener, CartLoa
                 });
 
         List<MenuModel> menuModels2 = new ArrayList<>();
-        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
+        FirebaseDatabase.getInstance(NomorMeja.getNamacabang())
                 .getReference("menu").child("Burger")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -228,7 +228,7 @@ public class Menu extends AppCompatActivity implements MenuLoadListener, CartLoa
                 });
 
         List<MenuModel> menuModels3 = new ArrayList<>();
-        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
+        FirebaseDatabase.getInstance(NomorMeja.getNamacabang())
                 .getReference("menu").child("Cemilan")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -252,7 +252,7 @@ public class Menu extends AppCompatActivity implements MenuLoadListener, CartLoa
                 });
 
         List<MenuModel> menuModels4 = new ArrayList<>();
-        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
+        FirebaseDatabase.getInstance(NomorMeja.getNamacabang())
                 .getReference("menu").child("Minuman")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -276,7 +276,7 @@ public class Menu extends AppCompatActivity implements MenuLoadListener, CartLoa
                 });
 
         List<MenuModel> menuModels5 = new ArrayList<>();
-        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
+        FirebaseDatabase.getInstance(NomorMeja.getNamacabang())
                 .getReference("menu").child("Paket")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -401,7 +401,7 @@ public class Menu extends AppCompatActivity implements MenuLoadListener, CartLoa
     private void counCartItem() {
         List<CartModel> cartModels = new ArrayList<>();
         FirebaseDatabase.
-                getInstance(stringaddress.firebaseDbesto).
+                getInstance(NomorMeja.getNamacabang()).
                 getReference("cart").child(nomormeja)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override

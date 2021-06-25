@@ -92,7 +92,7 @@ public class ChartAdapter extends RecyclerView.Adapter<ChartAdapter.CartViewHold
 
     private void deleteFromFirebase(CartModel cartModel) {
         FirebaseDatabase.
-                getInstance(stringaddress.firebaseDbesto)
+                getInstance(NomorMeja.getNamacabang())
                 .getReference("cart").child(nomormeja).child(cartModel.getKey())
                 .removeValue().addOnSuccessListener(aVoid -> EventBus.getDefault().postSticky(new UpdateCartEventonCart()));
     }
@@ -115,7 +115,7 @@ public class ChartAdapter extends RecyclerView.Adapter<ChartAdapter.CartViewHold
 
     private void updateFirebase(CartModel cartModel) {
         FirebaseDatabase.
-                getInstance(stringaddress.firebaseDbesto).
+                getInstance(NomorMeja.getNamacabang()).
                 getReference("cart").child(nomormeja).child(cartModel.getKey()).
                 setValue(cartModel).addOnSuccessListener(aVoid -> EventBus.getDefault().postSticky(new UpdateCartEventonCart()));
     }
