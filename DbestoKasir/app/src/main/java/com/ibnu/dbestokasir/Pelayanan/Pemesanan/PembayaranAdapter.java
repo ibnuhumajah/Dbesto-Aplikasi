@@ -16,6 +16,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import butterknife.Unbinder;
 
 import com.bumptech.glide.Glide;
 import com.ibnu.dbestokasir.R;
+import com.ibnu.dbestokasir.eventbus.UpdatePemesanan;
 
 import java.util.List;
 
@@ -55,7 +57,7 @@ public class PembayaranAdapter extends RecyclerView.Adapter<PembayaranAdapter.My
     @Override
     public void onBindViewHolder(@NonNull MyPembayaranViewHolder holder, int position) {
         Glide.with(context).load(pembayaranModelList.get(position).getGambar()).into(holder.imgPemesanan);
-        holder.txtNama.setText(new StringBuilder().append(pembayaranModelList.get(position).getNamaMakanan()));
+        holder.txtNama.setText(new StringBuilder().append(pembayaranModelList.get(position).getNama()));
         holder.txtHarga.setText(new StringBuilder("Harga Satuan: ").append(pembayaranModelList.get(position).getHarga()));
         holder.txtQuantity.setText(new StringBuilder("Banyak Item: ").append(pembayaranModelList.get(position).getQuantity()));
         holder.totalHarga.setText(new StringBuilder("Rp.").append(pembayaranModelList.get(position).getTotalPrice()));

@@ -2,13 +2,17 @@ package kaisar_pajar_oktavianus_entiman.tugasahir;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 
 public class Splashscreen extends AppCompatActivity {
 
     int durasiSplash = 3000;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,4 +27,6 @@ public class Splashscreen extends AppCompatActivity {
         }, durasiSplash);
 
     }
+
+
 }

@@ -1,11 +1,13 @@
 package kaisar_pajar_oktavianus_entiman.tugasahir;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
@@ -14,11 +16,18 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import kaisar_pajar_oktavianus_entiman.tugasahir.model.NomorMeja;
 
@@ -92,7 +101,8 @@ public class PilihCabang extends AppCompatActivity {
         btn_cabangE.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                notifikasi();
+
+//                notifikasi();
 //                NomorMeja.setNamacabang(Stringaddress.firebaseDbesto);
 //                NomorMeja.setNamacabangsel(txtCabangE.getText().toString());
 //                Intent cabangE = new Intent(PilihCabang.this, HalamanScan.class);
@@ -126,6 +136,8 @@ public class PilihCabang extends AppCompatActivity {
         notificationManager.notify(0, builder.build());
     }
 
+    }
+
 //    void sendOnChanel(){
 //        Notification notification = new NotificationCompat.Builder(this, App.CHANNEL_1_ID)
 //                .setSmallIcon(R.drawable.logo_footer_white)
@@ -138,4 +150,3 @@ public class PilihCabang extends AppCompatActivity {
 //        notificationManager.notify(0, notification);
 //    }
 
-}

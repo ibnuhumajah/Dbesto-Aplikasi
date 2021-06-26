@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -16,16 +17,21 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -34,6 +40,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -59,6 +66,7 @@ import kaisar_pajar_oktavianus_entiman.tugasahir.model.NomorMeja;
 import kaisar_pajar_oktavianus_entiman.tugasahir.model.NotaModel;
 import kaisar_pajar_oktavianus_entiman.tugasahir.model.PembayaranModel;
 
+
 public class CartActivity extends AppCompatActivity implements CartLoadListener {
 
     @BindView(R.id.recycler_car)
@@ -77,6 +85,13 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
     String Dana = "https://link.dana.id/qr/64i1lbz";
 
     CartLoadListener cartLoadListener;
+
+
+    WebView webView;
+    String url2 = "http://dbesto.epizy.com";
+
+    private static final String TAG = "PushNotification";
+    private static final String CHANNEL_ID = "102";
 
     @Override
     protected void onStart() {
@@ -107,6 +122,12 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
         Drawable drawablWhite = drawable.getConstantState().newDrawable();
         drawablWhite.mutate().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
         btnBayar.setImageDrawable(drawablWhite);
+        webView = findViewById(R.id.web);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.setWebViewClient(new WebViewClient());
+
+        createNotificationChannel();
+        getToken();
 
         btnBayar.setOnClickListener(view -> {
             FirebaseDatabase
@@ -310,6 +331,7 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
 
     }
 
+
     void bayarLangsung() {
         //tarik cart
         List<CartModel> cartModels = new ArrayList<>();
@@ -339,7 +361,6 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
                                                         KategoriModel kategoriModel = new KategoriModel();
                                                         kategoriModel.setKategori(dataSnapshot.getKey());
                                                         for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                                                            Log.e("response :", dataSnapshot1.toString());
                                                             MenuModel menuModel = dataSnapshot1.getValue(MenuModel.class);
                                                             menuModel.setKey(dataSnapshot1.getKey());
                                                             menuModels.add(menuModel);
@@ -351,7 +372,6 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
                                                             stok.child(kategoriModel.getKategori()).addListenerForSingleValueEvent(new ValueEventListener() {
                                                                 @Override
                                                                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                                                                    Log.e("data :", snapshot.getKey());
                                                                     for (DataSnapshot dataSnapshot2 : snapshot.getChildren()) {
                                                                         if (dataSnapshot2.getKey().equals(cartModel.getKey())) {
                                                                             Map<String, Object> updateData = new HashMap<>();
@@ -401,6 +421,8 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
                                                     .addOnSuccessListener(aVoid -> cartLoadListener.onCartLoadFailed("Pesanan anda diterima oleh kasir"))
                                                     .addOnFailureListener(e -> cartLoadListener.onCartLoadFailed(e.getMessage()));
 
+                                            webView.loadUrl(url2);
+
                                             //hapus cart
                                             FirebaseDatabase.
                                                     getInstance(NomorMeja.getNamacabang())
@@ -426,6 +448,34 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
                         cartLoadListener.onCartLoadFailed(error.getMessage());
                     }
                 });
+    }
+
+    private void getToken() {
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                //If task is failed then
+                if (!task.isSuccessful()) {
+                    Log.d(TAG, "onComplete: Failed to get the Token");
+                }
+
+                //Token
+                String token = task.getResult();
+                Log.d(TAG, "onComplete: " + token);
+            }
+        });
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "firebaseNotifChannel1";
+            String description = "Receve Firebase notification";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     private void loadCartDariFirebase() {

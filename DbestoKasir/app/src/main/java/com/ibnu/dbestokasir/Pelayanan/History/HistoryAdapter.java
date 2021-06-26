@@ -57,7 +57,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyPembay
         }
 
         Glide.with(context).load(historyModelList.get(position).getGambar()).into(holder.imgHistory);
-        holder.txtNamaHistory.setText(new StringBuilder().append(historyModelList.get(position).getNamaMakanan()));
+        holder.txtNamaHistory.setText(new StringBuilder().append(historyModelList.get(position).getNama()));
         holder.txtIdHistory.setText(new StringBuilder("Waktu Pemesanan : ").append(historyModelList.get(position).getKey()));
         holder.txtQuantity.setText(new StringBuilder("Banyak Item : ").append(historyModelList.get(position).getQuantity()));
         holder.totalHarga.setText(new StringBuilder("Rp.").append(historyModelList.get(position).getTotalPrice()));

@@ -2,13 +2,19 @@ package com.ibnu.dbestokasir.Pelayanan.History;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -22,8 +28,8 @@ import com.ibnu.dbestokasir.Pelayanan.Pemesanan.PembayaranAdapter;
 import com.ibnu.dbestokasir.Pelayanan.Pemesanan.PembayaranLoadListener;
 import com.ibnu.dbestokasir.Pelayanan.Pemesanan.PembayaranModel;
 import com.ibnu.dbestokasir.Pelayanan.Pemesanan.Stringaddress;
-import com.ibnu.dbestokasir.Presensi.Model;
 import com.ibnu.dbestokasir.R;
+import com.ibnu.dbestokasir.admin.absen.Model;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -53,6 +59,12 @@ public class HistoryActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(new DividerItemDecoration(this, layoutManager.getOrientation()));
 
         loadHistory();
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        TextView textView = (TextView)toolbar.findViewById(R.id.toolbarTextView);
+        textView.setText("History Pemesanan");
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     private void loadHistory() {
@@ -92,5 +104,29 @@ public class HistoryActivity extends AppCompatActivity {
             }
 
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.save_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+
+            case R.id.action_save:
+//                createPDF(nama);
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

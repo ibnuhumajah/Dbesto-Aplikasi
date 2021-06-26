@@ -1,6 +1,4 @@
 package com.ibnu.dbestokasir.Pelayanan.Meja;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -11,7 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -31,12 +28,14 @@ import com.ibnu.dbestokasir.Pelayanan.Pemesanan.PembayaranLoadListener;
 import com.ibnu.dbestokasir.Pelayanan.Pemesanan.PembayaranModel;
 import com.ibnu.dbestokasir.Pelayanan.Pemesanan.Stringaddress;
 import com.ibnu.dbestokasir.R;
+import com.ibnu.dbestokasir.eventbus.UpdatePemesanan;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.lang.CharSequence;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -90,11 +89,13 @@ public class Pemesanan extends AppCompatActivity implements PembayaranLoadListen
     private void Proses() {
         // tarik table cart
         List<PembayaranModel> pembayaranModels = new ArrayList<>();
-        FirebaseDatabase.
-                getInstance(stringaddress.firebaseDbesto).
-                getReference("pembayaran").child("1").addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase
+                .getInstance(stringaddress.firebaseDbesto).
+                getReference("pembayaran")
+                .child("1")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+            public void onDataChange(@NotNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         PembayaranModel pembayaranModel = dataSnapshot.getValue(PembayaranModel.class);
@@ -118,11 +119,11 @@ public class Pemesanan extends AppCompatActivity implements PembayaranLoadListen
 
                         dbPemesanan.child(pembayaranModel.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
-                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                            public void onDataChange(@NotNull DataSnapshot snapshot) {
                                 {
                                     HistoryModel historyModel = new HistoryModel();
                                     historyModel.setKey(""+waktu);
-                                    historyModel.setNamaMakanan(pembayaranModel.getNamaMakanan());
+                                    historyModel.setNama(pembayaranModel.getNama());
                                     historyModel.setHarga(pembayaranModel.getHarga());
                                     historyModel.setGambar(pembayaranModel.getGambar());
                                     historyModel.setTotalPrice((pembayaranModel.getTotalPrice()));
@@ -130,15 +131,16 @@ public class Pemesanan extends AppCompatActivity implements PembayaranLoadListen
 
                                     dbPemesanan.child(pembayaranModel.getKey())
                                             .setValue(historyModel);
+                                    EventBus.getDefault().postSticky(new UpdatePemesanan());
 
                                     Intent proses = new Intent(Pemesanan.this, PelayananMain.class);
                                     startActivity(proses);
-
+                                    finish();
                                 }
                             }
 
                             @Override
-                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                            public void onCancelled( @NotNull DatabaseError error) {
                                 cartLoadListener.onCartLoadFailed(error.getMessage());
                             }
                         });
@@ -147,7 +149,7 @@ public class Pemesanan extends AppCompatActivity implements PembayaranLoadListen
                 }
             }
             @Override
-            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+            public void onCancelled(@NotNull DatabaseError error) {
                 cartLoadListener.onCartLoadFailed(error.getMessage());
             }
         });
@@ -160,16 +162,12 @@ public class Pemesanan extends AppCompatActivity implements PembayaranLoadListen
     }
 
     private void loadPemesanan() {
-        DatabaseReference db = FirebaseDatabase.
-                getInstance(stringaddress.firebaseDbesto).
-                getReference("pembayaran");
-
         List<PembayaranModel> pembayaranModels = new ArrayList<>();
         FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
                 .getReference("pembayaran").child("1")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    public void onDataChange( DataSnapshot snapshot) {
                         if (snapshot.exists()) {
                             for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
                                 PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
@@ -193,150 +191,10 @@ public class Pemesanan extends AppCompatActivity implements PembayaranLoadListen
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-//                        menuLoadListener.onMenuLoadFailed(error.getMessage());
+                    public void onCancelled( DatabaseError error) {
                     }
                 });
-//        List<PembayaranModel> pembayaranModels2 = new ArrayList<>();
-//        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
-//                .getReference("pembayaran").child("2")
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        if (snapshot.exists()) {
-//                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
-//                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
-//                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
-//                                pembayaranModels.add(pembayaranModel);
-//                            }
-//                            pembayaranLoadListener.onPembayaranLoadSuccess(pembayaranModels);
-//                        } else {
-////                            menuLoadListener.onMenuLoadFailed("Kesalahan jaringan");
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-////                        menuLoadListener.onMenuLoadFailed(error.getMessage());
-//                    }
-//                });
-//        List<PembayaranModel> pembayaranModels3 = new ArrayList<>();
-//        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
-//                .getReference("pembayaran").child("3")
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        if (snapshot.exists()) {
-//                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
-//                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
-//                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
-//                                pembayaranModels.add(pembayaranModel);
-//                            }
-//                            pembayaranLoadListener.onPembayaranLoadSuccess(pembayaranModels);
-//                        } else {
-////                            menuLoadListener.onMenuLoadFailed("Kesalahan jaringan");
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-////                        menuLoadListener.onMenuLoadFailed(error.getMessage());
-//                    }
-//                });
-//        List<PembayaranModel> pembayaranModels4 = new ArrayList<>();
-//        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
-//                .getReference("pembayaran").child("4")
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        if (snapshot.exists()) {
-//                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
-//                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
-//                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
-//                                pembayaranModels.add(pembayaranModel);
-//                            }
-//                            pembayaranLoadListener.onPembayaranLoadSuccess(pembayaranModels);
-//                        } else {
-////                            menuLoadListener.onMenuLoadFailed("Kesalahan jaringan");
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-////                        menuLoadListener.onMenuLoadFailed(error.getMessage());
-//                    }
-//                });
-//        List<PembayaranModel> pembayaranModels5 = new ArrayList<>();
-//        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
-//                .getReference("pembayaran").child("5")
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        if (snapshot.exists()) {
-//                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
-//                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
-//                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
-//                                pembayaranModels.add(pembayaranModel);
-//                            }
-//                            pembayaranLoadListener.onPembayaranLoadSuccess(pembayaranModels);
-//                        } else {
-////                            menuLoadListener.onMenuLoadFailed("Kesalahan jaringan");
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-////                        menuLoadListener.onMenuLoadFailed(error.getMessage());
-//                    }
-//                });
-//        List<PembayaranModel> pembayaranModels6 = new ArrayList<>();
-//        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
-//                .getReference("pembayaran").child("6")
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        if (snapshot.exists()) {
-//                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
-//                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
-//                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
-//                                pembayaranModels.add(pembayaranModel);
-//                            }
-//                            pembayaranLoadListener.onPembayaranLoadSuccess(pembayaranModels);
-//                        } else {
-////                            menuLoadListener.onMenuLoadFailed("Kesalahan jaringan");
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-////                        menuLoadListener.onMenuLoadFailed(error.getMessage());
-//                    }
-//                });
-//        List<PembayaranModel> pembayaranModels7 = new ArrayList<>();
-//        FirebaseDatabase.getInstance(stringaddress.firebaseDbesto)
-//                .getReference("pembayaran").child("7")
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        if (snapshot.exists()) {
-//                            for (DataSnapshot pembayaranSnapshot : snapshot.getChildren()) {
-//                                PembayaranModel pembayaranModel = pembayaranSnapshot.getValue(PembayaranModel.class);
-//                                pembayaranModel.setKey(pembayaranSnapshot.getKey());
-//                                pembayaranModels.add(pembayaranModel);
-//                            }
-//                            pembayaranLoadListener.onPembayaranLoadSuccess(pembayaranModels);
-//                        } else {
-////                            menuLoadListener.onMenuLoadFailed("Kesalahan jaringan");
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-////                        menuLoadListener.onMenuLoadFailed(error.getMessage());
-//                    }
-//                });
     }
-
 
     @Override
     public void onCartLoadSuccess(List<CartModel> cartModelList) {
@@ -345,6 +203,11 @@ public class Pemesanan extends AppCompatActivity implements PembayaranLoadListen
 
     @Override
     public void onCartLoadFailed(String message) {
+
+    }
+
+    @Override
+    public void onPembayaranLoad(boolean notificationBadge) {
 
     }
 

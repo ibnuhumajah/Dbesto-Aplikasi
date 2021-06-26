@@ -58,8 +58,9 @@ public class PenilaianMain extends AppCompatActivity{
 
         webView = (WebView)findViewById(R.id.webview1);
         webSettings = webView.getSettings();
-
+        webSettings.setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
+
         webView.loadUrl(url);
 
     }

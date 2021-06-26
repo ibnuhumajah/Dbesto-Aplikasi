@@ -135,7 +135,7 @@
                                     android:id="@+id/badge"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="0"
+                                    android:text=""
                                     android:textColor="#fff"
                                     android:layout_centerInParent="true"/>
                             </RelativeLayout>
@@ -218,7 +218,7 @@
                                     android:id="@+id/badge2"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="0"
+                                    android:text=""
                                     android:textColor="#fff"
                                     android:layout_centerInParent="true"/>
                             </RelativeLayout>
@@ -293,7 +293,7 @@
                                     android:id="@+id/badge3"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="0"
+                                    android:text=""
                                     android:textColor="#fff"
                                     android:layout_centerInParent="true"/>
                             </RelativeLayout>
@@ -375,7 +375,7 @@
                                     android:id="@+id/badge4"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="0"
+                                    android:text=""
                                     android:textColor="#fff"
                                     android:layout_centerInParent="true"/>
                             </RelativeLayout>
@@ -450,7 +450,7 @@
                                     android:id="@+id/badge5"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="0"
+                                    android:text=""
                                     android:textColor="#fff"
                                     android:layout_centerInParent="true"/>
                             </RelativeLayout>
@@ -525,7 +525,7 @@
                                     android:id="@+id/badge6"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="0"
+                                    android:text=""
                                     android:textColor="#fff"
                                     android:layout_centerInParent="true"/>
                             </RelativeLayout>

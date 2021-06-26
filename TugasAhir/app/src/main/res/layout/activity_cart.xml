@@ -7,6 +7,12 @@
     android:id="@+id/mainLayout"
     tools:context=".CartActivity">
 
+    <WebView
+        android:id="@+id/web"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+
     <LinearLayout
         android:id="@+id/panel"
         android:layout_width="match_parent"
