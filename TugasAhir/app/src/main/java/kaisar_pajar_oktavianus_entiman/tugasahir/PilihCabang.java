@@ -39,11 +39,15 @@ public class PilihCabang extends AppCompatActivity {
     TextView txtCabangA, txtCabangB, txtCabangC, txtCabangD, txtCabangE;
     Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
     Uri customuri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://kaisar_pajar_oktavianus_entiman.tugasahir/raw/pristine");
+    private static final String TAG = "PushNotificationa";
+    private static final String CHANNEL_ID = "102";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pilih_cabang);
+        getToken();
 
 //        notificationManager = NotificationManagerCompat.from(this);
 
@@ -61,7 +65,7 @@ public class PilihCabang extends AppCompatActivity {
         btn_cabangA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NomorMeja.setNamacabang(Stringaddress.firebaseTugasahir);
+                NomorMeja.setNamacabang(Stringaddress.firebasedbestocabangA);
                 NomorMeja.setNamacabangsel(txtCabangA.getText().toString());
                 Intent cabangA = new Intent(PilihCabang.this, HalamanScan.class);
                 startActivity(cabangA);
@@ -71,7 +75,7 @@ public class PilihCabang extends AppCompatActivity {
         btn_cabangB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NomorMeja.setNamacabang(Stringaddress.firebaseDbesto);
+                NomorMeja.setNamacabang(Stringaddress.firebasedbestocabangB);
                 NomorMeja.setNamacabangsel(txtCabangB.getText().toString());
                 Intent cabangB = new Intent(PilihCabang.this, HalamanScan.class);
                 startActivity(cabangB);
@@ -81,7 +85,7 @@ public class PilihCabang extends AppCompatActivity {
         btn_cabangC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NomorMeja.setNamacabang(Stringaddress.firebaseDbesto);
+                NomorMeja.setNamacabang(Stringaddress.firebasedbestocabangC);
                 NomorMeja.setNamacabangsel(txtCabangC.getText().toString());
                 Intent cabangC = new Intent(PilihCabang.this, HalamanScan.class);
                 startActivity(cabangC);
@@ -91,7 +95,7 @@ public class PilihCabang extends AppCompatActivity {
         btn_cabangD.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NomorMeja.setNamacabang(Stringaddress.firebaseDbesto);
+                NomorMeja.setNamacabang(Stringaddress.firebasedbestocabangD);
                 NomorMeja.setNamacabangsel(txtCabangD.getText().toString());
                 Intent cabangD = new Intent(PilihCabang.this, HalamanScan.class);
                 startActivity(cabangD);
@@ -101,15 +105,30 @@ public class PilihCabang extends AppCompatActivity {
         btn_cabangE.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-//                notifikasi();
-//                NomorMeja.setNamacabang(Stringaddress.firebaseDbesto);
-//                NomorMeja.setNamacabangsel(txtCabangE.getText().toString());
-//                Intent cabangE = new Intent(PilihCabang.this, HalamanScan.class);
-//                startActivity(cabangE);
+                NomorMeja.setNamacabang(Stringaddress.firebasedbestocabangE);
+                NomorMeja.setNamacabangsel(txtCabangE.getText().toString());
+                Intent cabangE = new Intent(PilihCabang.this, HalamanScan.class);
+                startActivity(cabangE);
             }
         });
     }
+
+    private void getToken() {
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                //If task is failed then
+                if (!task.isSuccessful()) {
+                    Log.e(TAG, "onComplete: Failed to get the Token");
+                }
+
+                //Token
+                String token = task.getResult();
+                Log.e(TAG, "onComplete: " + token);
+            }
+        });
+    }
+
 
     void notifikasi() {
         String message = "this is a notification";
@@ -136,7 +155,7 @@ public class PilihCabang extends AppCompatActivity {
         notificationManager.notify(0, builder.build());
     }
 
-    }
+}
 
 //    void sendOnChanel(){
 //        Notification notification = new NotificationCompat.Builder(this, App.CHANNEL_1_ID)

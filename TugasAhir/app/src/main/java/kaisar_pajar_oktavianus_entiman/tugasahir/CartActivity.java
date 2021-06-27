@@ -88,9 +88,9 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
 
 
     WebView webView;
-    String url2 = "http://dbesto.epizy.com";
+    String url2 = "http://dbesto.epizy.com/index.php";
 
-    private static final String TAG = "PushNotification";
+    private static final String TAG = "PushNotificationa";
     private static final String CHANNEL_ID = "102";
 
     @Override
@@ -125,9 +125,6 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
         webView = findViewById(R.id.web);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
-
-        createNotificationChannel();
-        getToken();
 
         btnBayar.setOnClickListener(view -> {
             FirebaseDatabase
@@ -448,34 +445,6 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
                         cartLoadListener.onCartLoadFailed(error.getMessage());
                     }
                 });
-    }
-
-    private void getToken() {
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-            @Override
-            public void onComplete(@NonNull Task<String> task) {
-                //If task is failed then
-                if (!task.isSuccessful()) {
-                    Log.d(TAG, "onComplete: Failed to get the Token");
-                }
-
-                //Token
-                String token = task.getResult();
-                Log.d(TAG, "onComplete: " + token);
-            }
-        });
-    }
-
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "firebaseNotifChannel1";
-            String description = "Receve Firebase notification";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
     }
 
     private void loadCartDariFirebase() {
