@@ -109,6 +109,8 @@
         android:orientation="vertical"
         android:visibility="gone">
 
+
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -135,6 +137,17 @@
             android:layout_marginBottom="10dp"
             app:cardBackgroundColor="#CAC9C9"
             app:cardCornerRadius="10dp">
+
+            <WebView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/blangsung"
+                android:visibility="gone"/>
+            <WebView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/bdana"
+                android:visibility="gone"/>
 
             <TextView
                 android:layout_width="match_parent"

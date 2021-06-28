@@ -1,0 +1,106 @@
+{
+  "project_info": {
+    "project_number": "14959645135",
+    "firebase_url": "https://neospectra-scanner.firebaseio.com",
+    "project_id": "neospectra-scanner",
+    "storage_bucket": "neospectra-scanner.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:14959645135:android:6448c2f939fcb0971542ba",
+        "android_client_info": {
+          "package_name": "com.si_ware.neospectra"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "14959645135-csgsf8mfjmla2cqpdhflh5m7d8k4has6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.si_ware.neospectra",
+            "certificate_hash": "240b54922bad6d9108f9eefaadff13f910cc15cf"
+          }
+        },
+        {
+          "client_id": "14959645135-2e9mih3v080a4la1aevlosr92uroj9au.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5-W4kxOTKyQhc54jmkWBWpX1lCbblHH4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "14959645135-2e9mih3v080a4la1aevlosr92uroj9au.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:14959645135:android:ecd4f7561af5ae371542ba",
+        "android_client_info": {
+          "package_name": "com.test.pushnotificationproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "14959645135-2e9mih3v080a4la1aevlosr92uroj9au.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5-W4kxOTKyQhc54jmkWBWpX1lCbblHH4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "14959645135-2e9mih3v080a4la1aevlosr92uroj9au.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:14959645135:android:2f2520771fb339f31542ba",
+        "android_client_info": {
+          "package_name": "kaisar_pajar_oktavianus_entiman.tugasahir"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "14959645135-2e9mih3v080a4la1aevlosr92uroj9au.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5-W4kxOTKyQhc54jmkWBWpX1lCbblHH4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "14959645135-2e9mih3v080a4la1aevlosr92uroj9au.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

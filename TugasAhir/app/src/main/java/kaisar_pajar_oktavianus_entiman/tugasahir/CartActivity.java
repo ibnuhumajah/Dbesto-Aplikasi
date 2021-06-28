@@ -88,7 +88,8 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
 
 
     WebView webView;
-    String url2 = "http://dbesto.epizy.com/index.php";
+    String urllangsung = "http://dbesto.epizy.com/index.php";
+    String urldana = "http://dbesto.epizy.com/dana.php";
 
     private static final String TAG = "PushNotificationa";
     private static final String CHANNEL_ID = "102";
@@ -145,6 +146,12 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
                                 CardView btn_Dana = bottomSheetDialog2.findViewById(R.id.btn_Online);
                                 CardView btn_cancel = bottomSheetDialog2.findViewById(R.id.btn_cancel2);
                                 CardView btn_Bayar = bottomSheetDialog2.findViewById(R.id.btn_Ya);
+                                WebView webViewd = btn_Bayar.findViewById(R.id.bdana);
+                                webViewd.getSettings().setJavaScriptEnabled(true);
+                                webViewd.setWebViewClient(new WebViewClient());
+                                WebView webViewl = btn_Bayar.findViewById(R.id.blangsung);
+                                webViewl.getSettings().setJavaScriptEnabled(true);
+                                webViewl.setWebViewClient(new WebViewClient());
                                 CardView btn_cancelBayar = bottomSheetDialog2.findViewById(R.id.btn_cancelBayar);
                                 bottom_sheet_process.setVisibility(View.VISIBLE);
 
@@ -158,6 +165,7 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
                                         btn_Bayar.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
+                                                webViewl.loadUrl(urllangsung);
                                                 bayarLangsung();
                                                 final BottomSheetDialog bottomSheetDialogNota = new BottomSheetDialog(CartActivity.this);
                                                 bottomSheetDialogNota.setContentView(R.layout.nota);
@@ -224,6 +232,7 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
                                         btn_Bayar.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
+                                                webViewd.loadUrl(urldana);
                                                 bayarLangsung();
                                                 final BottomSheetDialog bottomSheetDialogNota = new BottomSheetDialog(CartActivity.this);
                                                 bottomSheetDialogNota.setContentView(R.layout.nota);
@@ -418,7 +427,6 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
                                                     .addOnSuccessListener(aVoid -> cartLoadListener.onCartLoadFailed("Pesanan anda diterima oleh kasir"))
                                                     .addOnFailureListener(e -> cartLoadListener.onCartLoadFailed(e.getMessage()));
 
-                                            webView.loadUrl(url2);
 
                                             //hapus cart
                                             FirebaseDatabase.
