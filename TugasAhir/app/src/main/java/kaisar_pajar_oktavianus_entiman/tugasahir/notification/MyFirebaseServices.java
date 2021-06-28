@@ -1,7 +1,12 @@
 package kaisar_pajar_oktavianus_entiman.tugasahir.notification;
 
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -28,7 +33,9 @@ public class MyFirebaseServices extends FirebaseMessagingService {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setSmallIcon(R.drawable.logo_footer_white_removebg_preview)
+                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(),
+                        R.drawable.logo_footer_white))
                 .setContentTitle(title)
                 .setContentText(message)
                 .setStyle(new NotificationCompat.BigTextStyle()
@@ -36,6 +43,7 @@ public class MyFirebaseServices extends FirebaseMessagingService {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 // Set the intent that will fire when the user taps the notification
                 .setContentIntent(pendingIntent)
+                .setSound((RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)))
                 .setAutoCancel(true);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
