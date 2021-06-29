@@ -32,14 +32,18 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import kaisar_pajar_oktavianus_entiman.tugasahir.CartActivity;
 import kaisar_pajar_oktavianus_entiman.tugasahir.R;
 import kaisar_pajar_oktavianus_entiman.tugasahir.Stringaddress;
 import kaisar_pajar_oktavianus_entiman.tugasahir.eventbus.UpdateCartEvent;
+import kaisar_pajar_oktavianus_entiman.tugasahir.eventbus.UpdateCartEventonCart;
 import kaisar_pajar_oktavianus_entiman.tugasahir.listener.CartLoadListener;
 import kaisar_pajar_oktavianus_entiman.tugasahir.listener.RecyclerViewListener;
 import kaisar_pajar_oktavianus_entiman.tugasahir.model.CartModel;
+import kaisar_pajar_oktavianus_entiman.tugasahir.model.KategoriModel;
 import kaisar_pajar_oktavianus_entiman.tugasahir.model.MenuModel;
 import kaisar_pajar_oktavianus_entiman.tugasahir.model.NomorMeja;
+import kaisar_pajar_oktavianus_entiman.tugasahir.model.PembayaranModel;
 
 public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyMenuViewHolder> {
 
@@ -79,11 +83,11 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyMenuViewHold
                 cartLoadListener.onCartLoadFailed("Stok habis");
 
             if (menuModelList.get(position).getStok() > 0)
-                addToCart(menuModelList.get(position));
+                addToCart(menuModelList.get(position), menuModelList.get(position).getStok());
         });
     }
 
-    private void addToCart(MenuModel menuModel) {
+    private void addToCart(MenuModel menuModel, int stok) {
         DatabaseReference useCart = FirebaseDatabase.
                 getInstance(NomorMeja.getNamacabang()).
                 getReference("cart").child(nomormeja);
@@ -94,16 +98,22 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyMenuViewHold
                 if (snapshot.exists()) //jika sudah ada item di cart
                 {
                     CartModel cartModel = snapshot.getValue(CartModel.class);
-                    cartModel.setQuantity(cartModel.getQuantity() + 1);
-                    Map<String, Object> updateData = new HashMap<>();
-                    updateData.put("quantity", cartModel.getQuantity());
-                    updateData.put("totalPrice", cartModel.getQuantity() * Float.parseFloat(cartModel.getHarga()));
+                    if (stok <=  cartModel.getQuantity()) {
+                        cartLoadListener.onCartLoadFailed(cartModel.getNama() + "Stok tidak memadai");
+                    }
+                    if (stok > cartModel.getQuantity()) {
+                        cartModel.setQuantity(cartModel.getQuantity() + 1);
+                        Map<String, Object> updateData = new HashMap<>();
+                        updateData.put("quantity", cartModel.getQuantity());
+                        updateData.put("totalPrice", cartModel.getQuantity() * Float.parseFloat(cartModel.getHarga()));
 
-                    useCart.child(menuModel.getKey()).updateChildren(updateData).
-                            addOnSuccessListener(aVoid -> {
-                                cartLoadListener.onCartLoadFailed(cartModel.getNama() + " ditambahkan ke keranjang");
-                            })
-                            .addOnFailureListener(e -> cartLoadListener.onCartLoadFailed(e.getMessage()));
+                        useCart.child(menuModel.getKey()).updateChildren(updateData).
+                                addOnSuccessListener(aVoid -> {
+                                    cartLoadListener.onCartLoadFailed(cartModel.getNama() + " ditambahkan ke keranjang");
+                                })
+                                .addOnFailureListener(e -> cartLoadListener.onCartLoadFailed(e.getMessage()));
+                    }
+
                 } else //jika belum ada item dicart
                 {
                     CartModel cartModel = new CartModel();
@@ -170,4 +180,5 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyMenuViewHold
             listener.onRecyclerClick(view, getAdapterPosition());
         }
     }
+
 }

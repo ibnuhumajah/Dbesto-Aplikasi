@@ -12,6 +12,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -48,6 +49,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +87,8 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
     String Dana = "https://link.dana.id/qr/64i1lbz";
 
     CartLoadListener cartLoadListener;
-
+    boolean sudahjalan = false;
+    int stokkurangbeli = 0;
 
     WebView webView;
     String urllangsung = "http://dbesto.epizy.com/index.php";
@@ -128,206 +131,8 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
         webView.setWebViewClient(new WebViewClient());
 
         btnBayar.setOnClickListener(view -> {
-            FirebaseDatabase
-                    .getInstance(NomorMeja.getNamacabang())
-                    .getReference("cart").child(nomormeja)
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                            if (snapshot.exists()) {
-                                final BottomSheetDialog bottomSheetDialog2 = new BottomSheetDialog(CartActivity.this);
-                                bottomSheetDialog2.setContentView(R.layout.bottom_sheet_dialog);
-
-                                bottomSheetDialog2.setCanceledOnTouchOutside(false);
-
-                                LinearLayout bottom_sheet_process = bottomSheetDialog2.findViewById(R.id.bottom_sheet_process);
-                                LinearLayout bottom_sheet_validasi = bottomSheetDialog2.findViewById(R.id.bottom_sheet_validasi);
-                                CardView btn_BayaraLangsung = bottomSheetDialog2.findViewById(R.id.btn_Bayarlangsung);
-                                CardView btn_Dana = bottomSheetDialog2.findViewById(R.id.btn_Online);
-                                CardView btn_cancel = bottomSheetDialog2.findViewById(R.id.btn_cancel2);
-                                CardView btn_Bayar = bottomSheetDialog2.findViewById(R.id.btn_Ya);
-                                WebView webViewd = btn_Bayar.findViewById(R.id.bdana);
-                                webViewd.getSettings().setJavaScriptEnabled(true);
-                                webViewd.setWebViewClient(new WebViewClient());
-                                WebView webViewl = btn_Bayar.findViewById(R.id.blangsung);
-                                webViewl.getSettings().setJavaScriptEnabled(true);
-                                webViewl.setWebViewClient(new WebViewClient());
-                                CardView btn_cancelBayar = bottomSheetDialog2.findViewById(R.id.btn_cancelBayar);
-                                bottom_sheet_process.setVisibility(View.VISIBLE);
-
-                                btn_BayaraLangsung.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-
-                                        bottom_sheet_process.setVisibility(View.GONE);
-                                        bottom_sheet_validasi.setVisibility(View.VISIBLE);
-
-                                        btn_Bayar.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                webViewl.loadUrl(urllangsung);
-                                                bayarLangsung();
-                                                final BottomSheetDialog bottomSheetDialogNota = new BottomSheetDialog(CartActivity.this);
-                                                bottomSheetDialogNota.setContentView(R.layout.nota);
-                                                bottomSheetDialogNota.setCanceledOnTouchOutside(false);
-
-                                                RecyclerView nota = bottomSheetDialogNota.findViewById(R.id.recyclerNota);
-                                                TextView totalBayarnota = bottomSheetDialogNota.findViewById(R.id.totalBayarNota);
-
-                                                RecyclerView.LayoutManager mManager;
-                                                mManager = new LinearLayoutManager(CartActivity.this, LinearLayoutManager.VERTICAL, false);
-                                                nota.setLayoutManager(mManager);
-
-                                                List<NotaModel> notaModels = new ArrayList<>();
-                                                FirebaseDatabase
-                                                        .getInstance(NomorMeja.getNamacabang())
-                                                        .getReference("cart").child(nomormeja)
-                                                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                                                            @Override
-                                                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                                                                if (snapshot.exists()) {
-                                                                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                                                        NotaModel notaModel = dataSnapshot.getValue(NotaModel.class);
-                                                                        notaModel.setKey(dataSnapshot.getKey());
-                                                                        notaModels.add(notaModel);
-                                                                    }
-
-                                                                    double sum = 0;
-                                                                    for (NotaModel notaModel : notaModels) {
-                                                                        sum += notaModel.getTotalPrice();
-                                                                    }
-                                                                    totalBayarnota.setText(new StringBuilder("Total bayar = Rp").append(sum) + "00");
-
-                                                                    NotaAdapter notaAdapter = new NotaAdapter(getApplicationContext(), notaModels);
-                                                                    nota.setAdapter(notaAdapter);
-                                                                }
-                                                            }
-
-                                                            @Override
-                                                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                                                                cartLoadListener.onCartLoadFailed(error.getMessage());
-                                                            }
-                                                        });
-                                                bottomSheetDialog2.hide();
-                                                bottomSheetDialogNota.show();
-                                            }
-                                        });
-
-                                        btn_cancelBayar.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                bottom_sheet_validasi.setVisibility(View.GONE);
-                                                bottom_sheet_process.setVisibility(View.VISIBLE);
-                                            }
-                                        });
-                                    }
-                                });
-                                btn_Dana.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-
-                                        bottom_sheet_process.setVisibility(View.GONE);
-                                        bottom_sheet_validasi.setVisibility(View.VISIBLE);
-
-                                        btn_Bayar.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                webViewd.loadUrl(urldana);
-                                                bayarLangsung();
-                                                final BottomSheetDialog bottomSheetDialogNota = new BottomSheetDialog(CartActivity.this);
-                                                bottomSheetDialogNota.setContentView(R.layout.nota);
-                                                bottomSheetDialogNota.setCanceledOnTouchOutside(false);
-
-                                                LinearLayout notadana = bottomSheetDialogNota.findViewById(R.id.notaDana);
-                                                LinearLayout notalangsung = bottomSheetDialogNota.findViewById(R.id.notaLangsung);
-                                                RecyclerView nota = bottomSheetDialogNota.findViewById(R.id.recyclerNotaDana);
-                                                TextView totalBayarnota = bottomSheetDialogNota.findViewById(R.id.totalBayarNotaDana);
-                                                CardView cardDana = bottomSheetDialogNota.findViewById(R.id.bayarDana);
-
-                                                notadana.setVisibility(View.VISIBLE);
-                                                notalangsung.setVisibility(View.GONE);
-
-                                                RecyclerView.LayoutManager mManager;
-                                                mManager = new LinearLayoutManager(CartActivity.this, LinearLayoutManager.VERTICAL, false);
-                                                nota.setLayoutManager(mManager);
-
-                                                List<NotaModel> notaModels = new ArrayList<>();
-                                                FirebaseDatabase
-                                                        .getInstance(NomorMeja.getNamacabang())
-                                                        .getReference("cart").child(nomormeja)
-                                                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                                                            @Override
-                                                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                                                                if (snapshot.exists()) {
-                                                                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                                                        NotaModel notaModel = dataSnapshot.getValue(NotaModel.class);
-                                                                        notaModel.setKey(dataSnapshot.getKey());
-                                                                        notaModels.add(notaModel);
-                                                                    }
-
-                                                                    double sum = 0;
-                                                                    for (NotaModel notaModel : notaModels) {
-                                                                        sum += notaModel.getTotalPrice();
-                                                                    }
-                                                                    totalBayarnota.setText(new StringBuilder("Total bayar = Rp").append(sum) + "00");
-                                                                    cardDana.setOnClickListener(new View.OnClickListener() {
-                                                                        @Override
-                                                                        public void onClick(View view) {
-                                                                            Intent i = new Intent(Intent.ACTION_VIEW, dana_);
-                                                                            startActivity(i);
-//                                                                            Toast.makeText(CartActivity.this, "DANA", Toast.LENGTH_SHORT).show();
-                                                                            bottomSheetDialog2.hide();
-                                                                        }
-                                                                    });
-
-                                                                    NotaAdapter notaAdapter = new NotaAdapter(getApplicationContext(), notaModels);
-                                                                    nota.setAdapter(notaAdapter);
-                                                                }
-                                                            }
-
-                                                            @Override
-                                                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                                                                cartLoadListener.onCartLoadFailed(error.getMessage());
-                                                            }
-                                                        });
-                                                bottomSheetDialog2.hide();
-                                                bottomSheetDialogNota.show();
-                                            }
-                                        });
-
-                                        btn_cancelBayar.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                bottom_sheet_validasi.setVisibility(View.GONE);
-                                                bottom_sheet_process.setVisibility(View.VISIBLE);
-                                            }
-                                        });
-
-//
-//
-                                    }
-                                });
-
-                                btn_cancel.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-//                        fungsi cancel bottom sheet
-                                        bottomSheetDialog2.hide();
-//                    tx_numberOfRuns.setText("1");
-                                    }
-                                });
-                                bottomSheetDialog2.show();
-                            }
-                            if (!snapshot.exists()) {
-                                cartLoadListener.onCartLoadFailed("Pesanan belum ada ...");
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                            cartLoadListener.onCartLoadFailed(error.getMessage());
-                        }
-                    });
+//            validasiBayar();
+            fungsiButton();
 
         });
 
@@ -337,6 +142,34 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
 
     }
 
+    void validasiBayar() {
+        List<CartModel> cartModels = new ArrayList<>();
+        FirebaseDatabase
+                .getInstance(NomorMeja.getNamacabang())
+                .getReference("cart").child(nomormeja)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                CartModel cartModel = dataSnapshot.getValue(CartModel.class);
+                                cartModel.setKey(dataSnapshot.getKey());
+                                cartModels.add(cartModel);
+
+
+                            }
+                        }
+                        if (!snapshot.exists()) {
+                            cartLoadListener.onCartLoadFailed("Pesanan belum ada ...");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                        cartLoadListener.onCartLoadFailed(error.getMessage());
+                    }
+                });
+    }
 
     void bayarLangsung() {
         //tarik cart
@@ -443,9 +276,9 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
                                 });
                             }
                         }
-                        if (!snapshot.exists()) {
-                            Toast.makeText(CartActivity.this, "data cart kosong", Toast.LENGTH_SHORT).show();
-                        }
+//                        if (!snapshot.exists()) {
+//                            Toast.makeText(CartActivity.this, "data cart kosong", Toast.LENGTH_SHORT).show();
+//                        }
                     }
 
                     @Override
@@ -518,7 +351,7 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
         loadCartDariFirebase();
     }
 
-    void baca_pesanan () {
+    void baca_pesanan() {
         //tambahin notifikasi taskbar kalo bisa
     }
 
@@ -534,10 +367,227 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setAutoCancel(true);
 
-        NotificationManager notificationManager = (NotificationManager)getSystemService(
+        NotificationManager notificationManager = (NotificationManager) getSystemService(
                 Context.NOTIFICATION_SERVICE
         );
         notificationManager.notify(0, builder.build());
     }
 
+    void fungsiButton() {
+
+        List<CartModel> cartModels = new ArrayList<>();
+        FirebaseDatabase
+                .getInstance(NomorMeja.getNamacabang())
+                .getReference("cart").child(nomormeja)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                CartModel cartModel = dataSnapshot.getValue(CartModel.class);
+                                cartModel.setKey(dataSnapshot.getKey());
+                                cartModels.add(cartModel);
+
+
+                            }
+                            final BottomSheetDialog bottomSheetDialog2 = new BottomSheetDialog(CartActivity.this);
+                            bottomSheetDialog2.setContentView(R.layout.bottom_sheet_dialog);
+
+                            bottomSheetDialog2.setCanceledOnTouchOutside(false);
+                            bottomSheetDialog2.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    sudahjalan = false;
+                                }
+                            });
+
+                            LinearLayout bottom_sheet_process = bottomSheetDialog2.findViewById(R.id.bottom_sheet_process);
+                            LinearLayout bottom_sheet_validasi = bottomSheetDialog2.findViewById(R.id.bottom_sheet_validasi);
+                            CardView btn_BayaraLangsung = bottomSheetDialog2.findViewById(R.id.btn_Bayarlangsung);
+                            CardView btn_Dana = bottomSheetDialog2.findViewById(R.id.btn_Online);
+                            CardView btn_cancel = bottomSheetDialog2.findViewById(R.id.btn_cancel2);
+                            CardView btn_Bayar = bottomSheetDialog2.findViewById(R.id.btn_Ya);
+                            WebView webViewd = btn_Bayar.findViewById(R.id.bdana);
+                            webViewd.getSettings().setJavaScriptEnabled(true);
+                            webViewd.setWebViewClient(new WebViewClient());
+                            WebView webViewl = btn_Bayar.findViewById(R.id.blangsung);
+                            webViewl.getSettings().setJavaScriptEnabled(true);
+                            webViewl.setWebViewClient(new WebViewClient());
+                            CardView btn_cancelBayar = bottomSheetDialog2.findViewById(R.id.btn_cancelBayar);
+                            bottom_sheet_process.setVisibility(View.VISIBLE);
+
+                            btn_BayaraLangsung.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    bottom_sheet_process.setVisibility(View.GONE);
+                                    bottom_sheet_validasi.setVisibility(View.VISIBLE);
+
+                                    btn_Bayar.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            webViewl.loadUrl(urllangsung);
+                                            bayarLangsung();
+                                            final BottomSheetDialog bottomSheetDialogNota = new BottomSheetDialog(CartActivity.this);
+                                            bottomSheetDialogNota.setContentView(R.layout.nota);
+                                            bottomSheetDialogNota.setCanceledOnTouchOutside(false);
+
+                                            RecyclerView nota = bottomSheetDialogNota.findViewById(R.id.recyclerNota);
+                                            TextView totalBayarnota = bottomSheetDialogNota.findViewById(R.id.totalBayarNota);
+
+                                            RecyclerView.LayoutManager mManager;
+                                            mManager = new LinearLayoutManager(CartActivity.this, LinearLayoutManager.VERTICAL, false);
+                                            nota.setLayoutManager(mManager);
+
+                                            List<NotaModel> notaModels = new ArrayList<>();
+                                            FirebaseDatabase
+                                                    .getInstance(NomorMeja.getNamacabang())
+                                                    .getReference("cart").child(nomormeja)
+                                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                                            if (snapshot.exists()) {
+                                                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                                                    NotaModel notaModel = dataSnapshot.getValue(NotaModel.class);
+                                                                    notaModel.setKey(dataSnapshot.getKey());
+                                                                    notaModels.add(notaModel);
+                                                                }
+                                                                double sum = 0;
+                                                                for (NotaModel notaModel : notaModels) {
+                                                                    sum += notaModel.getTotalPrice();
+                                                                }
+                                                                totalBayarnota.setText(new StringBuilder("Total bayar = Rp").append(sum) + "00");
+
+                                                                NotaAdapter notaAdapter = new NotaAdapter(getApplicationContext(), notaModels);
+                                                                nota.setAdapter(notaAdapter);
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                                                            cartLoadListener.onCartLoadFailed(error.getMessage());
+                                                        }
+                                                    });
+                                            bottomSheetDialog2.hide();
+                                            bottomSheetDialogNota.show();
+                                        }
+                                    });
+
+                                    btn_cancelBayar.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            bottom_sheet_validasi.setVisibility(View.GONE);
+                                            bottom_sheet_process.setVisibility(View.VISIBLE);
+                                        }
+                                    });
+                                }
+                            });
+                            btn_Dana.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    bottom_sheet_process.setVisibility(View.GONE);
+                                    bottom_sheet_validasi.setVisibility(View.VISIBLE);
+
+                                    btn_Bayar.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            webViewd.loadUrl(urldana);
+                                            bayarLangsung();
+                                            final BottomSheetDialog bottomSheetDialogNota = new BottomSheetDialog(CartActivity.this);
+                                            bottomSheetDialogNota.setContentView(R.layout.nota);
+                                            bottomSheetDialogNota.setCanceledOnTouchOutside(false);
+
+                                            LinearLayout notadana = bottomSheetDialogNota.findViewById(R.id.notaDana);
+                                            LinearLayout notalangsung = bottomSheetDialogNota.findViewById(R.id.notaLangsung);
+                                            RecyclerView nota = bottomSheetDialogNota.findViewById(R.id.recyclerNotaDana);
+                                            TextView totalBayarnota = bottomSheetDialogNota.findViewById(R.id.totalBayarNotaDana);
+                                            CardView cardDana = bottomSheetDialogNota.findViewById(R.id.bayarDana);
+
+                                            notadana.setVisibility(View.VISIBLE);
+                                            notalangsung.setVisibility(View.GONE);
+
+                                            RecyclerView.LayoutManager mManager;
+                                            mManager = new LinearLayoutManager(CartActivity.this, LinearLayoutManager.VERTICAL, false);
+                                            nota.setLayoutManager(mManager);
+
+                                            List<NotaModel> notaModels = new ArrayList<>();
+                                            FirebaseDatabase
+                                                    .getInstance(NomorMeja.getNamacabang())
+                                                    .getReference("cart").child(nomormeja)
+                                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                                            if (snapshot.exists()) {
+                                                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                                                    NotaModel notaModel = dataSnapshot.getValue(NotaModel.class);
+                                                                    notaModel.setKey(dataSnapshot.getKey());
+                                                                    notaModels.add(notaModel);
+                                                                }
+
+                                                                double sum = 0;
+                                                                for (NotaModel notaModel : notaModels) {
+                                                                    sum += notaModel.getTotalPrice();
+                                                                }
+                                                                totalBayarnota.setText(new StringBuilder("Total bayar = Rp").append(sum) + "00");
+                                                                cardDana.setOnClickListener(new View.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(View view) {
+                                                                        Intent i = new Intent(Intent.ACTION_VIEW, dana_);
+                                                                        startActivity(i);
+//                                                                            Toast.makeText(CartActivity.this, "DANA", Toast.LENGTH_SHORT).show();
+                                                                        bottomSheetDialog2.hide();
+                                                                    }
+                                                                });
+
+                                                                NotaAdapter notaAdapter = new NotaAdapter(getApplicationContext(), notaModels);
+                                                                nota.setAdapter(notaAdapter);
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                                                            cartLoadListener.onCartLoadFailed(error.getMessage());
+                                                        }
+                                                    });
+                                            bottomSheetDialog2.hide();
+                                            bottomSheetDialogNota.show();
+                                        }
+                                    });
+
+                                    btn_cancelBayar.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            bottom_sheet_validasi.setVisibility(View.GONE);
+                                            bottom_sheet_process.setVisibility(View.VISIBLE);
+                                        }
+                                    });
+
+//
+//
+                                }
+                            });
+
+                            btn_cancel.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+//                        fungsi cancel bottom sheet
+                                    bottomSheetDialog2.hide();
+                                    sudahjalan = false;
+//                    tx_numberOfRuns.setText("1");
+                                }
+                            });
+
+                            bottomSheetDialog2.show();
+                        }
+                        if (!snapshot.exists()) {
+                            cartLoadListener.onCartLoadFailed("Pesanan belum ada ...");
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                        cartLoadListener.onCartLoadFailed(error.getMessage());
+                    }
+                });
+    }
 }

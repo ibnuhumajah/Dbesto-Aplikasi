@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -98,11 +99,18 @@ public class ChartAdapter extends RecyclerView.Adapter<ChartAdapter.CartViewHold
     }
 
     private void plusCartItem(CartViewHolder holder, CartModel cartModel) {
-        cartModel.setQuantity(cartModel.getQuantity() + 1);
-        cartModel.setTotalPrice(cartModel.getQuantity() * Float.parseFloat(cartModel.getHarga()));
+        if (cartModel.getStok() == cartModel.getQuantity()){
+            Toast.makeText(context, cartModel.getNama().toLowerCase() + " tidak dapat ditambah lagi", Toast.LENGTH_SHORT).show();
+        }
+        if (cartModel.getStok() > cartModel.getQuantity()){
+            holder.btnPlus.setEnabled(true);
 
-        holder.txtQuantity.setText(new StringBuilder().append(cartModel.getQuantity()));
-        updateFirebase(cartModel);
+            cartModel.setQuantity(cartModel.getQuantity() + 1);
+            cartModel.setTotalPrice(cartModel.getQuantity() * Float.parseFloat(cartModel.getHarga()));
+
+            holder.txtQuantity.setText(new StringBuilder().append(cartModel.getQuantity()));
+            updateFirebase(cartModel);
+        }
     }
 
     private void minusCartItem(CartViewHolder holder, CartModel cartModel) {
