@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -13,8 +15,10 @@ import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,6 +28,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -41,13 +46,14 @@ public class PilihCabang extends AppCompatActivity {
     Uri customuri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://kaisar_pajar_oktavianus_entiman.tugasahir/raw/pristine");
     private static final String TAG = "PushNotificationa";
     private static final String CHANNEL_ID = "102";
-
+    private static final int MY_CAMERA_REQUEST_CODE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pilih_cabang);
-        getToken();
+
+       checkInternet();
 
 //        notificationManager = NotificationManagerCompat.from(this);
 
@@ -61,6 +67,10 @@ public class PilihCabang extends AppCompatActivity {
         txtCabangC = findViewById(R.id.txtcabangC);
         txtCabangD = findViewById(R.id.txtcabangD);
         txtCabangE = findViewById(R.id.txtcabangE);
+
+        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_REQUEST_CODE);
+        }
 
         btn_cabangA.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,6 +123,12 @@ public class PilihCabang extends AppCompatActivity {
         });
     }
 
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
+    }
+
     private void getToken() {
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
             @Override
@@ -129,43 +145,16 @@ public class PilihCabang extends AppCompatActivity {
         });
     }
 
-
-    void notifikasi() {
-        String message = "this is a notification";
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                PilihCabang.this
-        )
-                .setSmallIcon(R.drawable.dbesto)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.dbesto))
-                .setContentTitle("New Notification ")
-                .setAutoCancel(true)
-                .setSound(customuri)
-                .setContentText(message);
-
-        Intent intenta = new Intent(PilihCabang.this, PilihCabang.class);
-        intenta.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(PilihCabang.this, 0,
-                intenta, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(pendingIntent);
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(
-                Context.NOTIFICATION_SERVICE
-        );
-        notificationManager.notify(0, builder.build());
+    void checkInternet() {
+        if (isNetworkConnected())
+            getToken();
+        if (!isNetworkConnected())
+            Toast.makeText(this, "Tidak ada jaringan", Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkInternet();
+    }
 }
-
-//    void sendOnChanel(){
-//        Notification notification = new NotificationCompat.Builder(this, App.CHANNEL_1_ID)
-//                .setSmallIcon(R.drawable.logo_footer_white)
-//                .setContentTitle("Hi World")
-//                .setContentText("Hello world")
-//                .setPriority(PRIORITY_HIGH)
-//                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-//                .build();
-//
-//        notificationManager.notify(0, notification);
-//    }
-

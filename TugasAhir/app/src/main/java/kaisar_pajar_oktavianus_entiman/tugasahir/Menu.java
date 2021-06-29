@@ -6,15 +6,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
@@ -55,8 +59,6 @@ public class Menu extends AppCompatActivity implements MenuLoadListener, CartLoa
     RecyclerView recyclerviewCemilan;
     @BindView(R.id.recyclerviewMinuman)
     RecyclerView recyclerviewMinuman;
-//    @BindView(R.id.badge)
-//    NotificationBadge badge;
     @BindView(R.id.btnCart)
     FrameLayout btnCart;
     @BindView(R.id.mainLayout)
@@ -108,15 +110,16 @@ public class Menu extends AppCompatActivity implements MenuLoadListener, CartLoa
         coverBadge.setVisibility(View.GONE);
 
         init();
-        LoadMenuDariFirebase();
         counCartItem();
+
+        checkInternet();
 
         btnFriedChicken = findViewById(R.id.btnFriedChicken);
         btnPaket = findViewById(R.id.btnPaket);
         btnBurger = findViewById(R.id.btnBurger);
         btnCemilan = findViewById(R.id.btnCemilan);
         btnMinuman = findViewById(R.id.btnMinuman);
-        textView  = findViewById(R.id.txtNomormeja);
+        textView = findViewById(R.id.txtNomormeja);
         textView.setText("Meja nomor " + NomorMeja.getNomormeja());
 
         btnFriedChicken.setOnClickListener(new View.OnClickListener() {
@@ -179,6 +182,7 @@ public class Menu extends AppCompatActivity implements MenuLoadListener, CartLoa
     }
 
     private void LoadMenuDariFirebase() {
+
         List<MenuModel> menuModels = new ArrayList<>();
         FirebaseDatabase.getInstance(NomorMeja.getNamacabang())
                 .getReference("menu").child("friedChicken")
@@ -300,6 +304,19 @@ public class Menu extends AppCompatActivity implements MenuLoadListener, CartLoa
                 });
     }
 
+    void checkInternet() {
+        if (isNetworkConnected())
+            LoadMenuDariFirebase();
+        if (!isNetworkConnected())
+            Toast.makeText(this, "Tidak ada jaringan", Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
+    }
+
     private void init() {
         ButterKnife.bind(this);
 
@@ -325,7 +342,6 @@ public class Menu extends AppCompatActivity implements MenuLoadListener, CartLoa
         GridLayoutManager gridLayoutManager5 = new GridLayoutManager(this, 2);
         recyclerviewMinuman.setLayoutManager(gridLayoutManager5);
         recyclerviewMinuman.addItemDecoration(new SpaceItemDecoration());
-
 
 
         btnCart.setOnClickListener(v -> startActivity(new Intent(this, CartActivity.class)));
@@ -394,7 +410,7 @@ public class Menu extends AppCompatActivity implements MenuLoadListener, CartLoa
     @Override
     protected void onResume() {
         super.onResume();
-        LoadMenuDariFirebase();
+        checkInternet();
         counCartItem();
     }
 
@@ -417,12 +433,12 @@ public class Menu extends AppCompatActivity implements MenuLoadListener, CartLoa
                         for (CartModel cartModel : cartModels) {
                             a += cartModel.getQuantity();
                         }
-                        if (a > 0){
+                        if (a > 0) {
                             coverBadge.setVisibility(View.VISIBLE);
                             badge.setVisibility(View.VISIBLE);
                             badge.setText(String.valueOf(a));
                         }
-                        if (a <= 0){
+                        if (a <= 0) {
                             coverBadge.setVisibility(View.GONE);
                             badge.setVisibility(View.GONE);
                         }
@@ -440,7 +456,7 @@ public class Menu extends AppCompatActivity implements MenuLoadListener, CartLoa
         kembali();
     }
 
-    void kembali(){
+    void kembali() {
         AlertDialog.Builder builder = new AlertDialog.Builder(Menu.this);
         //settittle
         builder.setTitle("Allert");

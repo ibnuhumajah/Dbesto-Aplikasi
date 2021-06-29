@@ -99,7 +99,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MyMenuViewHold
                 {
                     CartModel cartModel = snapshot.getValue(CartModel.class);
                     if (stok <=  cartModel.getQuantity()) {
-                        cartLoadListener.onCartLoadFailed(cartModel.getNama() + "Stok tidak memadai");
+                        cartLoadListener.onCartLoadFailed("Stok " + cartModel.getNama().toLowerCase() +" tidak memadai");
                     }
                     if (stok > cartModel.getQuantity()) {
                         cartModel.setQuantity(cartModel.getQuantity() + 1);
