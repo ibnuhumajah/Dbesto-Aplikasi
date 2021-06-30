@@ -14,9 +14,13 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -48,6 +52,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -80,6 +87,9 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
     @BindView(R.id.mainLayout)
     RelativeLayout mainLayout;
     FloatingActionButton btnBayar, btnDanaPayment;
+
+    double a = 0;
+    int number = 55;
 
     Stringaddress stringaddress;
     String nomormeja = NomorMeja.getNomormeja();
@@ -140,6 +150,72 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
 
         loadCartDariFirebase();
 
+    }
+
+    void printPDF() {
+        List<NotaModel> notaModels = new ArrayList<>();
+        FirebaseDatabase
+                .getInstance(NomorMeja.getNamacabang())
+                .getReference("cart").child(NomorMeja.getNomormeja())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @com.google.firebase.database.annotations.NotNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+
+                                NotaModel notaModel = dataSnapshot.getValue(NotaModel.class);
+                                notaModel.setKey(dataSnapshot.getKey());
+                                notaModels.add(notaModel);
+                            }
+//                            for (NotaModel notaModel : notaModels){
+                            PdfDocument pdfDocument = new PdfDocument();
+                            Paint paint = new Paint();
+                            Paint linepaint = new Paint();
+                            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(250, 350, 1).create();
+                            PdfDocument.Page page = pdfDocument.startPage(pageInfo);
+                            Canvas canvas = page.getCanvas();
+
+                            paint.setTextSize(15.5f);
+                            paint.setColor(Color.rgb(0, 50, 250));
+
+                            canvas.drawText("D,Besto " + NomorMeja.getNamacabangsel(), 20, 20, paint);
+                            paint.setTextSize(8.5f);
+                            linepaint.setStyle(Paint.Style.STROKE);
+                            linepaint.setPathEffect(new DashPathEffect(new float[]{5, 5}, 0));
+                            linepaint.setStrokeWidth(2);
+                            canvas.drawLine(20, 40, 230, 40, linepaint);
+
+                            canvas.drawText("Pembelian: ", 20, 55, paint);
+
+//                                a += notaModel.getTotalPrice();
+                            for (int i = 0; i < notaModels.size(); i++) {
+                                Log.e("total harga: ", String.valueOf(notaModels.get(i).getTotalPrice()));
+                                a += notaModels.get(i).getTotalPrice();
+                                number += 20;
+                                canvas.drawText(notaModels.get(i).getNama(), 20, number, paint);
+                                canvas.drawText("Rp" + notaModels.get(i).getHarga(), 120, number, paint);
+                                canvas.drawText("x" + String.valueOf(notaModels.get(i).getQuantity()), 200, number, paint);
+                            }
+                            canvas.drawLine(20, number + 20, 230, number + 20, linepaint);
+                            canvas.drawText("Total", 120, number + 40, paint);
+                            paint.setTextAlign(Paint.Align.RIGHT);
+                            canvas.drawText("Rp" + a + "00", 230, number + 40, paint);
+
+                            pdfDocument.finishPage(page);
+                            File file = new File(CartActivity.this.getExternalFilesDir("/"), "d'besto.pdf");
+                            try {
+                                pdfDocument.writeTo(new FileOutputStream(file));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            pdfDocument.close();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull @com.google.firebase.database.annotations.NotNull DatabaseError error) {
+                    }
+                });
     }
 
     void validasiBayar() {
@@ -351,28 +427,6 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
         loadCartDariFirebase();
     }
 
-    void baca_pesanan() {
-        //tambahin notifikasi taskbar kalo bisa
-    }
-
-    void notifikasi() {
-        String message = "this is a notification";
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                CartActivity.this
-        )
-                .setSmallIcon(R.drawable.dbesto)
-                .setContentTitle("New Notification ")
-                .setContentText(message)
-                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setAutoCancel(true);
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(
-                Context.NOTIFICATION_SERVICE
-        );
-        notificationManager.notify(0, builder.build());
-    }
-
     void fungsiButton() {
 
         List<CartModel> cartModels = new ArrayList<>();
@@ -427,7 +481,11 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
                                         @Override
                                         public void onClick(View view) {
                                             webViewl.loadUrl(urllangsung);
+
+                                            printPDF();
+
                                             bayarLangsung();
+
                                             final BottomSheetDialog bottomSheetDialogNota = new BottomSheetDialog(CartActivity.this);
                                             bottomSheetDialogNota.setContentView(R.layout.nota);
                                             bottomSheetDialogNota.setCanceledOnTouchOutside(false);
@@ -493,7 +551,11 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
                                         @Override
                                         public void onClick(View view) {
                                             webViewd.loadUrl(urldana);
+
+                                            printPDF();
+
                                             bayarLangsung();
+
                                             final BottomSheetDialog bottomSheetDialogNota = new BottomSheetDialog(CartActivity.this);
                                             bottomSheetDialogNota.setContentView(R.layout.nota);
                                             bottomSheetDialogNota.setCanceledOnTouchOutside(false);
@@ -584,6 +646,7 @@ public class CartActivity extends AppCompatActivity implements CartLoadListener 
                             cartLoadListener.onCartLoadFailed("Pesanan belum ada ...");
                         }
                     }
+
                     @Override
                     public void onCancelled(@NonNull @NotNull DatabaseError error) {
                         cartLoadListener.onCartLoadFailed(error.getMessage());
