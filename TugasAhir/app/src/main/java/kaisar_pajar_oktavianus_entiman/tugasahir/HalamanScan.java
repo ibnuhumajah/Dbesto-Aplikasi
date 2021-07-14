@@ -32,7 +32,7 @@ public class HalamanScan extends AppCompatActivity {
         btnScan = findViewById(R.id.btnScan);
         txtCabang = findViewById(R.id.txtSelamatdatang);
 
-        txtCabang.setText("Selamat datang di d'Besto\n"+NomorMeja.getNamacabangsel());
+        txtCabang.setText("Selamat datang di d'Besto");
 
         btnScan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,12 +58,77 @@ public class HalamanScan extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        //check condition
-        if (intentResult.getContents() != null && (intentResult.getContents().equals("1") ||
-                intentResult.getContents().equals("2") || intentResult.getContents().equals("3") ||
-                intentResult.getContents().equals("4") || intentResult.getContents().equals("5") ||
-                intentResult.getContents().equals("6"))) {
-            NomorMeja.setNomormeja(intentResult.getContents());
+        //check condition beji ridwan rais
+        if (intentResult.getContents() != null && (intentResult.getContents().equals("Beji ridwan rais meja 1") ||
+                intentResult.getContents().equals("Beji ridwan rais meja 2") || intentResult.getContents().equals("Beji ridwan rais meja 3") ||
+                intentResult.getContents().equals("Beji ridwan rais meja 4") || intentResult.getContents().equals("Beji ridwan rais meja 5") ||
+                intentResult.getContents().equals("Beji ridwan rais meja 6"))) {
+            NomorMeja.setNamacabang(Stringaddress.firebasedbestocabangA);
+            String a = intentResult.getContents();
+            char last = a.charAt(a.length() -1);
+            NomorMeja.setNamacabangsel(a.substring(0, a.length() - 6));
+
+            NomorMeja.setNomormeja(""+last);
+            Intent utama = new Intent(this, Menu.class);
+            startActivity(utama);
+            finish();
+        }
+        //check condition nusantara
+        if (intentResult.getContents() != null && (intentResult.getContents().equals("Nusantara meja 1") ||
+                intentResult.getContents().equals("Nusantara meja 2") || intentResult.getContents().equals("Nusantara meja 3") ||
+                intentResult.getContents().equals("Nusantara meja 4") || intentResult.getContents().equals("Nusantara meja 5") ||
+                intentResult.getContents().equals("Nusantara meja 6"))) {
+            NomorMeja.setNamacabang(Stringaddress.firebasedbestocabangB);
+            String a = intentResult.getContents();
+            char last = a.charAt(a.length() -1);
+            NomorMeja.setNamacabangsel(a.substring(0, a.length() - 6));
+
+            NomorMeja.setNomormeja(""+last);
+            Intent utama = new Intent(this, Menu.class);
+            startActivity(utama);
+            finish();
+        }
+        //check condition auri
+        if (intentResult.getContents() != null && (intentResult.getContents().equals("Auri meja 1") ||
+                intentResult.getContents().equals("Auri meja 2") || intentResult.getContents().equals("Auri meja 3") ||
+                intentResult.getContents().equals("Auri meja 4") || intentResult.getContents().equals("Auri meja 5") ||
+                intentResult.getContents().equals("Auri meja 6"))) {
+            NomorMeja.setNamacabang(Stringaddress.firebasedbestocabangC);
+            String a = intentResult.getContents();
+            char last = a.charAt(a.length() -1);
+            NomorMeja.setNamacabangsel(a.substring(0, a.length() - 6));
+
+            NomorMeja.setNomormeja(""+last);
+            Intent utama = new Intent(this, Menu.class);
+            startActivity(utama);
+            finish();
+        }
+        //check condition pelni
+        if (intentResult.getContents() != null && (intentResult.getContents().equals("Pelni meja 1") ||
+                intentResult.getContents().equals("Pelni meja 2") || intentResult.getContents().equals("Pelni meja 3") ||
+                intentResult.getContents().equals("Pelni meja 4") || intentResult.getContents().equals("Pelni meja 5") ||
+                intentResult.getContents().equals("Pelni meja 6"))) {
+            NomorMeja.setNamacabang(Stringaddress.firebasedbestocabangD);
+            String a = intentResult.getContents();
+            char last = a.charAt(a.length() -1);
+            NomorMeja.setNamacabangsel(a.substring(0, a.length() - 6));
+
+            NomorMeja.setNomormeja(""+last);
+            Intent utama = new Intent(this, Menu.class);
+            startActivity(utama);
+            finish();
+        }
+        //check condition tegal parang
+        if (intentResult.getContents() != null && (intentResult.getContents().equals("Tegal parang meja 1") ||
+                intentResult.getContents().equals("Tegal parang meja 2") || intentResult.getContents().equals("Tegal parang meja 3") ||
+                intentResult.getContents().equals("Tegal parang meja 4") || intentResult.getContents().equals("Tegal parang meja 5") ||
+                intentResult.getContents().equals("Tegal parang meja 6"))) {
+            NomorMeja.setNamacabang(Stringaddress.firebasedbestocabangE);
+            String a = intentResult.getContents();
+            char last = a.charAt(a.length() -1);
+            NomorMeja.setNamacabangsel(a.substring(0, a.length() - 6));
+
+            NomorMeja.setNomormeja(""+last);
             Intent utama = new Intent(this, Menu.class);
             startActivity(utama);
             finish();

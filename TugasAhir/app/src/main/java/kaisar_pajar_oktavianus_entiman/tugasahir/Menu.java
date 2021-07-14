@@ -120,7 +120,7 @@ public class Menu extends AppCompatActivity implements MenuLoadListener, CartLoa
         btnCemilan = findViewById(R.id.btnCemilan);
         btnMinuman = findViewById(R.id.btnMinuman);
         textView = findViewById(R.id.txtNomormeja);
-        textView.setText("Meja nomor " + NomorMeja.getNomormeja());
+        textView.setText(NomorMeja.getNamacabangsel() + "\nMeja " + NomorMeja.getNomormeja());
 
         btnFriedChicken.setOnClickListener(new View.OnClickListener() {
             @Override

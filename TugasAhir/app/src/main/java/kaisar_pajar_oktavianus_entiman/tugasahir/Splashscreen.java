@@ -23,7 +23,7 @@ public class Splashscreen extends AppCompatActivity {
         createNotificationChannel();
         new Handler().postDelayed(() -> {
             Intent splash = new Intent(Splashscreen.this,
-                    PilihCabang.class);
+                    HalamanScan.class);
             startActivity(splash);
             finish();
         }, durasiSplash);

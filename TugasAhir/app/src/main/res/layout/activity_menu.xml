@@ -31,7 +31,7 @@
             android:gravity="center"
             android:text="Meja Nomor 1"
             android:textColor="#fff"
-            android:textSize="30sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <FrameLayout
